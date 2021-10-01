@@ -93,8 +93,6 @@ function Upload_Clip() {
 
   return (
     <div>
-      {/* <FormLabel component="legend"> Post Clip</FormLabel> */}
-      {/* <p style={{ width: 10, backgroundColor: "#8B139E" }}></p> */}
       <Typography sx={{ fontSize: 20, marginBottom: 3, color: "#8B139E" }} color="text.secondary" gutterBottom className="Heading">
         Post Clip
       </Typography>
