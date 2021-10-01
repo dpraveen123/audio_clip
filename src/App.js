@@ -1,11 +1,13 @@
 import logo from './logo.svg';
-import './App.css';
+// import './App.css';
 import Upload_Clip from './Upload_Clip';
+import ChipsArray from './sample'
 
 function App() {
   return (
-    <div className="App">
-      <Upload_Clip />
+    <div>
+      {/* <Upload_Clip /> */}
+      <ChipsArray />
     </div>
   );
 }

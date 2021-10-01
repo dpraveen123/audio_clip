@@ -2,6 +2,7 @@ import { Tag, Button } from 'antd';
 import React from 'react';
 import {  Input, Tooltip } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
+import 'antd/dist/antd.css';
 
 class EditableTagGroup extends React.Component {
   state = {
