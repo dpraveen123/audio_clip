@@ -1,0 +1,28 @@
+
+.card{
+    height: 80%;
+    width: 40%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform:translate(-50%,-50%);
+    box-sizing: border-box;
+    padding: 40px;
+    padding-top: 20px;
+}
+
+
+.title{
+    width: 100%;
+    font-size: large;
+margin-bottom: 15px;
+}
+.box
+{
+    height: 50px;
+    border: 1px solid rgb(70, 69, 69);
+    border-radius:5px;
+    padding: 12px;
+    font-size: 18px;
+    margin-top: 15px;
+}
