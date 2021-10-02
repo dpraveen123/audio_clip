@@ -39,8 +39,7 @@ import Title from "antd/lib/skeleton/Title";
 
 // const CheckboxGroup = Checkbox.Group;
 
-// const plainOptions = ["Apple", "Pear", "Orange"];
-// const defaultCheckedList = ["Apple", "Orange"];
+
 
 const props = {
   action: "https://www.mocky.io/v2/5cc8019d300000980a055e76",
