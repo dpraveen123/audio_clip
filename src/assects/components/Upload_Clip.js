@@ -206,9 +206,9 @@ class Upload_Clip extends React.Component {
           label="Title"
           variant="outlined"
           className="title"
-          // required
-          helperText="please fill out this field"
-          error
+          required
+          // helperText="please fill out this field"
+          // error
           onChange={(value) => {
             console.log("discription", value.target.value);
             // this.state.description = value
