@@ -35,36 +35,38 @@ import axios from 'axios'
 
 
 
-const props = {
+
+// defaultFileList: [
+//   {
+//     uid: "1",
+//     name: "xxx.png",
+//     status: "done",
+//     response: "Server Error 500", // custom error message to show
+//     url: "http://www.baidu.com/xxx.png",
+//   },
+//   {
+//     uid: "2",
+//     name: "yyy.png",
+//     status: "done",
+//     url: "http://www.baidu.com/yyy.png",
+//   },
+//   {
+//     uid: "3",
+//     name: "zzz.png",
+//     status: "error",
+//     response: "Server Error 500", // custom error message to show
+//     url: "http://www.baidu.com/zzz.png",
+//   },
+// ],
+var props = {
   action: "https://www.mocky.io/v2/5cc8019d300000980a055e76",
   onChange({ file, fileList }) {
     if (file.status !== "uploading") {
-      console.log(file, fileList);
+      console.log(file);
     }
-  },
-  // defaultFileList: [
-  //   {
-  //     uid: "1",
-  //     name: "xxx.png",
-  //     status: "done",
-  //     response: "Server Error 500", // custom error message to show
-  //     url: "http://www.baidu.com/xxx.png",
-  //   },
-  //   {
-  //     uid: "2",
-  //     name: "yyy.png",
-  //     status: "done",
-  //     url: "http://www.baidu.com/yyy.png",
-  //   },
-  //   {
-  //     uid: "3",
-  //     name: "zzz.png",
-  //     status: "error",
-  //     response: "Server Error 500", // custom error message to show
-  //     url: "http://www.baidu.com/zzz.png",
-  //   },
-  // ],
+  }
 };
+
 
 class Upload_Clip extends React.Component {
   constructor(props) {
@@ -88,7 +90,59 @@ class Upload_Clip extends React.Component {
       duration: 10,
       languages: [],
       objectId: 'sample',
-      tags: []
+      tags: [],
+      checked: [
+        {
+          lan: "IndianEnglish",
+          isChecked: false,
+          index: 0
+        },
+        {
+          lan: "Hindi",
+          isChecked: false,
+          index: 1
+        },
+        {
+          lan: "Spanish",
+          isChecked: false,
+          index: 2
+        },
+        {
+          lan: "Tamil",
+          isChecked: false,
+          index: 3
+        },
+        {
+          lan: "Kannada",
+          isChecked: false,
+          index: 4
+        },
+        {
+          lan: "Telugu",
+          isChecked: false,
+          index: 5
+        },
+        {
+          lan: "Marathi",
+          isChecked: false,
+          index: 6
+        },
+        {
+          lan: "Bengali",
+          isChecked: false,
+          index: 7
+        },
+        {
+          lan: "Marathi",
+          isChecked: false,
+          index: 8
+        },
+        {
+          lan: "Malayalam",
+          isChecked: false,
+          index: 9
+        }
+      ]
     }
   }
 
@@ -100,7 +154,49 @@ class Upload_Clip extends React.Component {
         this.setState({ data: persons });
         console.log(this.state.data);
       })
+
   }
+
+
+  postData = () => {
+    var obj = this.state.checked.filter(o => {
+      if (o.isChecked === true) {
+        return o.index
+      }
+    });
+    console.log(obj);
+    var userData = {
+      channelId: this.state.channelId,
+      description: this.state.description,
+      duration: this.state.duration,
+      languages: obj,
+      objectId: "e14620572f544e84a3587532864d74b3",
+      tags: this.state.tags
+    }
+    // axios.post(`https://virtserver.swaggerhub.com/fragmadata/Clips-WebUpload/1.0.0/api/internal/Clips`, { userData })
+    // .then(res => {
+    //   console.log(res);
+    //   console.log(res.data);
+    // })
+  }
+
+
+  getTags = (data) => {
+    this.setState({ tags: data })
+    console.log("data succes", data);
+  }
+  handleChange = (index, value) => {
+    this.state.checked[index].isChecked = !this.state.checked[index].isChecked
+
+
+    this.setState({
+
+      checked: this.state.checked
+    })
+    console.log("ischecked", this.state.checked);
+
+    // this.state.languages.concat(event)
+  };
 
 
 
@@ -117,6 +213,11 @@ class Upload_Clip extends React.Component {
           label="Title"
           variant="outlined"
           className="title"
+          onChange={(value) => {
+            this.setState({ description: value })
+          }
+            // console.log("description",)
+          }
         />
         <FormControl fullWidth style={{ marginTop: 15 }}>
           <InputLabel id="demo-simple-select-label">Channel Name</InputLabel>
@@ -133,7 +234,7 @@ class Upload_Clip extends React.Component {
             {
               this.state.data.map((l) => {
 
-                console.log(l.name);
+                // console.log(l);
                 return (
                   <MenuItem value={l.id} >{l.name}</MenuItem>
                 )
@@ -147,11 +248,13 @@ class Upload_Clip extends React.Component {
         <FormGroup style={{ marginTop: 15 }}>
           <FormLabel component="legend"> Language</FormLabel>
           {
-            Object.keys(this.state.Language).map(l => {
+            this.state.checked.map((l, index) => {
+              console.log(index)
+
               return (
                 <FormControlLabel
-                  control={<Checkbox />}
-                  label={l}
+                  control={<Checkbox checked={l.isChecked} onChange={() => this.handleChange(index, l.lan)} />}
+                  label={l.lan}
                 />
               )
             })
@@ -172,10 +275,10 @@ class Upload_Clip extends React.Component {
           <FormLabel > Tags</FormLabel>
         </div>
         <div className="box">
-          <EditableTagGroup />
+          <EditableTagGroup callBack={this.getTags} />
         </div>
         <div style={{ alignItems: "center", textAlign: "center" }}>
-          <Button variant="contained" style={{ marginTop: 35, textAlign: "center", backgroundColor: "#8B139E", color: "white", borderRadius: 5 }}>Upload Clip</Button>
+          <Button onClick={this.postData} variant="contained" style={{ marginTop: 35, textAlign: "center", backgroundColor: "#8B139E", color: "white", borderRadius: 5 }}>Upload Clip</Button>
         </div>
       </div>
     );

@@ -5,8 +5,16 @@ import { PlusOutlined } from '@ant-design/icons';
 import 'antd/dist/antd.css';
 
 class EditableTagGroup extends React.Component {
+  constructor(props) {
+    super(props);
+
+  }
+
+  componentDidMount = () => {
+    console.log(this.props.callBack);
+  }
   state = {
-    tags: ['Unremovable', 'Tag 2', 'Tag 3'],
+    tags: [],
     inputVisible: false,
     inputValue: '',
     editInputIndex: -1,
@@ -34,6 +42,7 @@ class EditableTagGroup extends React.Component {
       tags = [...tags, inputValue];
     }
     console.log(tags);
+    this.props.callBack(tags)
     this.setState({
       tags,
       inputVisible: false,
@@ -42,7 +51,7 @@ class EditableTagGroup extends React.Component {
   };
 
   handleEditInputChange = e => {
-    this.setState({editInputValue: e.target.value });
+    this.setState({ editInputValue: e.target.value });
   };
 
   handleEditInputConfirm = () => {
@@ -55,7 +64,9 @@ class EditableTagGroup extends React.Component {
         editInputIndex: -1,
         editInputValue: '',
       };
+
     });
+
   };
 
   saveInputRef = input => {
