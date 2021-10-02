@@ -1,7 +1,8 @@
 import { Tag, Button } from 'antd';
 import React from 'react';
-import {  Input, Tooltip } from 'antd';
+import { Input, Tooltip } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
+import 'antd/dist/antd.css';
 
 class EditableTagGroup extends React.Component {
   state = {
@@ -89,12 +90,14 @@ class EditableTagGroup extends React.Component {
 
           const tagElem = (
             <Tag
+              style={{ backgroundColor: "white", color: "#8B139E", borderRadius: 5, fontSize: 15, height: 25, marginBottom: 5, borderColor: "#8B139E", fontWeight: 500 }}
               className="edit-tag"
               key={tag}
               closable
               onClose={() => this.handleClose(tag)}
             >
               <span
+
                 onDoubleClick={e => {
                   if (index !== 0) {
                     this.setState({ editInputIndex: index, editInputValue: tag }, () => {
@@ -109,7 +112,7 @@ class EditableTagGroup extends React.Component {
             </Tag>
           );
           return isLongTag ? (
-            <Tooltip title={tag} key={tag}>
+            <Tooltip title={tag} key={tag} >
               {tagElem}
             </Tooltip>
           ) : (

@@ -1,7 +1,12 @@
-
+.App{
+    height: 100%;
+    width: 100%;
+   
+}
 .card{
     height: 80%;
     width: 40%;
+    min-width: 480px;
     position: absolute;
     top: 50%;
     left: 50%;
@@ -9,13 +14,16 @@
     box-sizing: border-box;
     padding: 40px;
     padding-top: 20px;
+    max-height: 80%;
+    overflow-y: scroll;
+    background-color: red;
 }
 
 
 .title{
     width: 100%;
     font-size: large;
-margin-bottom: 15px;
+margin-bottom: 20px;
 }
 .box
 {
@@ -24,5 +32,29 @@ margin-bottom: 15px;
     border-radius:5px;
     padding: 12px;
     font-size: 18px;
-    margin-top: 15px;
+    margin-top: 20px;
+    background-color: "#8B139E";
+    overflow: hidden;
+    height: auto;
 }
+.Heading{
+    text-align: center;
+    /* margin-bottom: 20px; */
+    /* font-size: 50px; */
+}
+
+.ant-tag-close-icon{
+    color: "#8B139E";
+}
+
+/* media queries for resposive */
+
+@media (max-width: 425px) {
+    
+    .card{
+       width: 100%;
+       background-color: red;
+
+    }
+   
+  }

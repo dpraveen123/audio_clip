@@ -22,6 +22,8 @@ import FormGroup from "@mui/material/FormGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import FormLabel from "@mui/material/FormLabel";
+import Typography from '@mui/material/Typography';
+import Title from "antd/lib/skeleton/Title";
 // import Button from '@mui/material/Button';
 // const onClick = ({ key }) => {
 //   message.info(`Click on item ${key}`);
@@ -87,10 +89,13 @@ function Upload_Clip() {
   //     setIndeterminate(false);
   //     setCheckAll(e.target.checked);
   //   };
+  // <span style={{ width: 10, backgroundColor: "#8B139E", color: "#8B139E", marginRight: 2 }} >" </span>
 
   return (
     <div>
-      {/* <FormLabel component="legend"> Post Clip</FormLabel> */}
+      <Typography sx={{ fontSize: 20, marginBottom: 3, color: "#8B139E" }} color="text.secondary" gutterBottom className="Heading">
+        Post Clip
+      </Typography>
       <TextField
         id="outlined-basic"
         label="Title"
@@ -104,7 +109,7 @@ function Upload_Clip() {
           id="demo-simple-select"
           // value={age}
           label="Channel Name"
-          // onChange={handleChange}
+        // onChange={handleChange}
         >
           <MenuItem value={10}>Channel 1</MenuItem>
           <MenuItem value={20}>Channel 2</MenuItem>
@@ -120,14 +125,20 @@ function Upload_Clip() {
         {/* <FormControlLabel control={<Checkbox />} label="Telugu" /> */}
         <FormControlLabel control={<Checkbox />} label="Hindi" />
       </FormGroup>
-      <Upload {...props} >
-        <Button icon={<UploadOutlined />}>Upload</Button>
-      </Upload>
-      <FormLabel style={{ marginTop: 20 }}> Tags</FormLabel>
+      <div style={{ marginTop: 15 }}>
+        <Upload {...props} >
+          <Button icon={<UploadOutlined style={{ color: "#8B139E", fontWeight: "bold" }} />} style={{ fontWeight: 500 }}> Upload</Button>
+        </Upload>
+      </div>
+      <div style={{ marginTop: 15 }}>
+        <FormLabel > Tags</FormLabel>
+      </div>
       <div className="box">
         <EditableTagGroup />
       </div>
-<Button variant="contained" style={{ marginTop: 20 ,textAlign:"center"}}>Upload Clip</Button>
+      <div style={{ alignItems: "center", textAlign: "center" }}>
+        <Button variant="contained" style={{ marginTop: 25, textAlign: "center", backgroundColor: "#8B139E", color: "white", borderRadius: 5 }}>Upload Clip</Button>
+      </div>
     </div>
   );
 }

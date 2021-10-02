@@ -6,11 +6,11 @@ function App() {
   return (
     <div className="App">
       <Card className='card'>
-      <Upload_Clip></Upload_Clip>
-    </Card>
+        <Upload_Clip/>
+      </Card>
     </div>
-    
-    
+
+
   );
 }
 
