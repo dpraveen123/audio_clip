@@ -42,13 +42,7 @@ import Title from "antd/lib/skeleton/Title";
 // const plainOptions = ["Apple", "Pear", "Orange"];
 // const defaultCheckedList = ["Apple", "Orange"];
 
-const props = {
-  action: "https://www.mocky.io/v2/5cc8019d300000980a055e76",
-  onChange({ file, fileList }) {
-    if (file.status !== "uploading") {
-      console.log(file, fileList);
-    }
-  },
+
   // defaultFileList: [
   //   {
   //     uid: "1",
@@ -71,7 +65,7 @@ const props = {
   //     url: "http://www.baidu.com/zzz.png",
   //   },
   // ],
-};
+
 
 function Upload_Clip() {
   //   const [checkedList, setCheckedList] = React.useState(defaultCheckedList);
@@ -90,7 +84,14 @@ function Upload_Clip() {
   //     setCheckAll(e.target.checked);
   //   };
   // <span style={{ width: 10, backgroundColor: "#8B139E", color: "#8B139E", marginRight: 2 }} >" </span>
-
+  const props = {
+    action: "https://www.mocky.io/v2/5cc8019d300000980a055e76",
+    onChange({ file, fileList }) {
+      if (file.status !== "uploading") {
+        console.log(file);
+      }
+    }
+  };
   return (
     <div className='clipBox'>
       <Typography sx={{ fontSize: 20, marginBottom: 3, color: "#8B139E" }} color="text.secondary" gutterBottom className="Heading">
@@ -120,10 +121,18 @@ function Upload_Clip() {
         <FormLabel component="legend"> Language</FormLabel>
         <FormControlLabel
           control={<Checkbox defaultChecked />}
-          label="English"
+          label="Language1"
         />
-        {/* <FormControlLabel control={<Checkbox />} label="Telugu" /> */}
-        <FormControlLabel control={<Checkbox />} label="Hindi" />
+        <FormControlLabel control={<Checkbox />} label="Language1" />
+        <FormControlLabel control={<Checkbox />} label="Language2" />
+        <FormControlLabel control={<Checkbox />} label="Language3" />
+        <FormControlLabel control={<Checkbox />} label="Language4" />
+        <FormControlLabel control={<Checkbox />} label="Language5" />
+        <FormControlLabel control={<Checkbox />} label="Language6" />
+        <FormControlLabel control={<Checkbox />} label="Language7" />
+        <FormControlLabel control={<Checkbox />} label="Language8" />
+        <FormControlLabel control={<Checkbox />} label="Language9" />
+        <FormControlLabel control={<Checkbox />} label="Language10" />
       </FormGroup>
       <div style={{ marginTop: 15 }}>
         <Upload {...props} >
