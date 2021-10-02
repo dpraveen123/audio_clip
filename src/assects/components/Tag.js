@@ -6,7 +6,7 @@ import 'antd/dist/antd.css';
 
 class EditableTagGroup extends React.Component {
   state = {
-    tags: ['Unremovable', 'Tag 2', 'Tag 3'],
+    tags: [ ],
     inputVisible: false,
     inputValue: '',
     editInputIndex: -1,
