@@ -1,15 +1,8 @@
 import React from "react";
 import {
-  //   Input,
-  //   Menu,
-  //   Dropdown,
-  //   message,
-  //   Checkbox,
-  //   Divider,
   Upload,
   Button,
-  // Tag,
-  //   Tag,
+
 } from "antd";
 import { DownOutlined, UploadOutlined } from "@ant-design/icons";
 import EditableTagGroup from "./Tag";
@@ -73,22 +66,7 @@ const props = {
 };
 
 function Upload_Clip() {
-  //   const [checkedList, setCheckedList] = React.useState(defaultCheckedList);
-  //   const [indeterminate, setIndeterminate] = React.useState(true);
-  //   const [checkAll, setCheckAll] = React.useState(false);
 
-  //   const onChange = (list) => {
-  //     setCheckedList(list);
-  //     setIndeterminate(!!list.length && list.length < plainOptions.length);
-  //     setCheckAll(list.length === plainOptions.length);
-  //   };
-
-  //   const onCheckAllChange = (e) => {
-  //     setCheckedList(e.target.checked ? plainOptions : []);
-  //     setIndeterminate(false);
-  //     setCheckAll(e.target.checked);
-  //   };
-  // <span style={{ width: 10, backgroundColor: "#8B139E", color: "#8B139E", marginRight: 2 }} >" </span>
 
   return (
     <div className='clipBox'>
