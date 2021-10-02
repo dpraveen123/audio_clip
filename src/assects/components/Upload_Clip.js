@@ -73,18 +73,7 @@ class Upload_Clip extends React.Component {
     super(props);
     this.state = {
       data: [],
-      Language: {
-        IndianEnglish: "0",
-        Hindi: "1",
-        Spanish: "2",
-        Tamil: "3",
-        Kannada: "4",
-        Telugu: "5",
-        Marathi: "6",
-        Bengali: "7",
-        Gujarati: "8",
-        Malayalam: "9"
-      },
+      Language: [],
       channelId: '',
       description: 'sample',
       duration: 10,
@@ -93,7 +82,7 @@ class Upload_Clip extends React.Component {
       tags: [],
       checked: [
         {
-          lan: "IndianEnglish",
+          lan: "English",
           isChecked: false,
           index: 0
         },
@@ -101,47 +90,47 @@ class Upload_Clip extends React.Component {
           lan: "Hindi",
           isChecked: false,
           index: 1
-        },
-        {
-          lan: "Spanish",
-          isChecked: false,
-          index: 2
-        },
-        {
-          lan: "Tamil",
-          isChecked: false,
-          index: 3
-        },
-        {
-          lan: "Kannada",
-          isChecked: false,
-          index: 4
-        },
-        {
-          lan: "Telugu",
-          isChecked: false,
-          index: 5
-        },
-        {
-          lan: "Marathi",
-          isChecked: false,
-          index: 6
-        },
-        {
-          lan: "Bengali",
-          isChecked: false,
-          index: 7
-        },
-        {
-          lan: "Marathi",
-          isChecked: false,
-          index: 8
-        },
-        {
-          lan: "Malayalam",
-          isChecked: false,
-          index: 9
         }
+        // {
+        //   lan: "Spanish",
+        //   isChecked: false,
+        //   index: 2
+        // },
+        // {
+        //   lan: "Tamil",
+        //   isChecked: false,
+        //   index: 3
+        // },
+        // {
+        //   lan: "Kannada",
+        //   isChecked: false,
+        //   index: 4
+        // },
+        // {
+        //   lan: "Telugu",
+        //   isChecked: false,
+        //   index: 5
+        // },
+        // {
+        //   lan: "Marathi",
+        //   isChecked: false,
+        //   index: 6
+        // },
+        // {
+        //   lan: "Bengali",
+        //   isChecked: false,
+        //   index: 7
+        // },
+        // {
+        //   lan: "Marathi",
+        //   isChecked: false,
+        //   index: 8
+        // },
+        // {
+        //   lan: "Malayalam",
+        //   isChecked: false,
+        //   index: 9
+        // }
       ]
     }
   }
@@ -159,30 +148,28 @@ class Upload_Clip extends React.Component {
 
 
   postData = () => {
-    var indexArray=[]
-    var obj = this.state.checked.filter(o => {
-      if (o.isChecked === true) {
-        indexArray.concat(o.index)
-
-        return o.index
-        
-      }
-    });
-    console.log(obj);
-    console.log("indexarray is",indexArray)
+    this.state.Language=[]
+       this.setState({Language:this.state.Language})
+   this.state.checked.map(l=>{
+     if(l.isChecked===true){
+       this.state.Language=this.state.Language.concat(l.index)
+       this.setState({Language:this.state.Language})
+     }
+   })
+   console.log("selected languages are",this.state.Language)
     var userData = {
       channelId: this.state.channelId,
       description: this.state.description,
       duration: this.state.duration,
-      languages: obj,
+      languages: this.state.Language,
       objectId: "e14620572f544e84a3587532864d74b3",
       tags: this.state.tags
     }
-    // axios.post(`https://virtserver.swaggerhub.com/fragmadata/Clips-WebUpload/1.0.0/api/internal/Clips`, { userData })
-    // .then(res => {
-    //   console.log(res);
-    //   console.log(res.data);
-    // })
+    axios.post(`https://virtserver.swaggerhub.com/fragmadata/Clips-WebUpload/1.0.0/api/internal/Clips`, { userData })
+    .then(res => {
+      console.log(res);
+      console.log(res.data);
+    })
   }
 
 
