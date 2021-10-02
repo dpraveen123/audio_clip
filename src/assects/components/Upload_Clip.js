@@ -148,15 +148,15 @@ class Upload_Clip extends React.Component {
 
 
   postData = () => {
-    this.state.Language=[]
-       this.setState({Language:this.state.Language})
-   this.state.checked.map(l=>{
-     if(l.isChecked===true){
-       this.state.Language=this.state.Language.concat(l.index)
-       this.setState({Language:this.state.Language})
-     }
-   })
-   console.log("selected languages are",this.state.Language)
+    this.state.Language = []
+    this.setState({ Language: this.state.Language })
+    this.state.checked.map(l => {
+      if (l.isChecked === true) {
+        this.state.Language = this.state.Language.concat(l.index)
+        this.setState({ Language: this.state.Language })
+      }
+    })
+    console.log("selected languages are", this.state.Language)
     var userData = {
       channelId: this.state.channelId,
       description: this.state.description,
@@ -165,11 +165,12 @@ class Upload_Clip extends React.Component {
       objectId: "e14620572f544e84a3587532864d74b3",
       tags: this.state.tags
     }
+    console.log(userData);
     axios.post(`https://virtserver.swaggerhub.com/fragmadata/Clips-WebUpload/1.0.0/api/internal/Clips`, { userData })
-    .then(res => {
-      console.log(res);
-      console.log(res.data);
-    })
+      .then(res => {
+        console.log(res);
+        console.log(res.data);
+      })
   }
 
 
@@ -205,8 +206,13 @@ class Upload_Clip extends React.Component {
           label="Title"
           variant="outlined"
           className="title"
+          // required
+          helperText="please fill out this field"
+          error
           onChange={(value) => {
-            this.setState({ description: value })
+            console.log("discription", value.target.value);
+            // this.state.description = value
+            this.setState({ description: value.target.value })
           }
             // console.log("description",)
           }
@@ -220,7 +226,7 @@ class Upload_Clip extends React.Component {
             label="Channel Name"
             onChange={(l) => {
               console.log("changed value", l.target.value);
-              // this.setState({ channelId: l.id })
+              this.setState({ channelId: l.target.value })
             }}
           >
             {
