@@ -159,12 +159,17 @@ class Upload_Clip extends React.Component {
 
 
   postData = () => {
+    var indexArray=[]
     var obj = this.state.checked.filter(o => {
       if (o.isChecked === true) {
+        indexArray.concat(o.index)
+
         return o.index
+        
       }
     });
     console.log(obj);
+    console.log("indexarray is",indexArray)
     var userData = {
       channelId: this.state.channelId,
       description: this.state.description,
