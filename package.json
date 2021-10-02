@@ -1,6 +1,7 @@
 {
   "name": "audio_clip",
   "version": "0.1.0",
+  "node": "12.16.2",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.4.1",
