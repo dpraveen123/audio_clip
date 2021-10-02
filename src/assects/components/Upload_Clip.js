@@ -17,6 +17,7 @@ import Checkbox from "@mui/material/Checkbox";
 import FormLabel from "@mui/material/FormLabel";
 import Typography from '@mui/material/Typography';
 import Title from "antd/lib/skeleton/Title";
+import axios from 'axios'
 // import Button from '@mui/material/Button';
 // const onClick = ({ key }) => {
 //   message.info(`Click on item ${key}`);
@@ -65,59 +66,120 @@ const props = {
   // ],
 };
 
-function Upload_Clip() {
+class Upload_Clip extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      data: [],
+      Language: {
+        IndianEnglish: "0",
+        Hindi: "1",
+        Spanish: "2",
+        Tamil: "3",
+        Kannada: "4",
+        Telugu: "5",
+        Marathi: "6",
+        Bengali: "7",
+        Gujarati: "8",
+        Malayalam: "9"
+      },
+      channelId: '',
+      description: 'sample',
+      duration: 10,
+      languages: [],
+      objectId: 'sample',
+      tags: []
+    }
+  }
+
+  componentDidMount() {
+    axios.get(`https://virtserver.swaggerhub.com/fragmadata/Clips-WebUpload/1.0.0/api/internal/Channels`)
+      .then(res => {
+        const persons = res.data;
+        // console.log(persons);
+        this.setState({ data: persons });
+        console.log(this.state.data);
+      })
+  }
 
 
-  return (
-    <div className='clipBox'>
-      <Typography sx={{ fontSize: 20, marginBottom: 3, color: "#8B139E" }} color="text.secondary" gutterBottom className="Heading">
-        Post Clip
-      </Typography>
-      <TextField
-        id="outlined-basic"
-        label="Title"
-        variant="outlined"
-        className="title"
-      />
-      <FormControl fullWidth style={{ marginTop: 15 }}>
-        <InputLabel id="demo-simple-select-label">Channel Name</InputLabel>
-        <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
-          // value={age}
-          label="Channel Name"
-        // onChange={handleChange}
-        >
-          <MenuItem value={10}>Channel 1</MenuItem>
-          <MenuItem value={20}>Channel 2</MenuItem>
-          <MenuItem value={30}>Channel 3</MenuItem>
-        </Select>
-      </FormControl>
-      <FormGroup style={{ marginTop: 15 }}>
-        <FormLabel component="legend"> Language</FormLabel>
-        <FormControlLabel
-          control={<Checkbox defaultChecked />}
-          label="English"
+
+  // function Upload_Clip() {
+
+  render() {
+    return (
+      <div className='clipBox'>
+        <Typography sx={{ fontSize: 20, marginBottom: 3, color: "#8B139E" }} color="text.secondary" gutterBottom className="Heading">
+          Post Clip
+        </Typography>
+        <TextField
+          id="outlined-basic"
+          label="Title"
+          variant="outlined"
+          className="title"
         />
-        {/* <FormControlLabel control={<Checkbox />} label="Telugu" /> */}
-        <FormControlLabel control={<Checkbox />} label="Hindi" />
-      </FormGroup>
-      <div style={{ marginTop: 15 }}>
-        <Upload {...props} >
-          <Button icon={<UploadOutlined style={{ color: "#8B139E", fontWeight: "bold" }} />} style={{ fontWeight: 500 }}> Upload</Button>
-        </Upload>
+        <FormControl fullWidth style={{ marginTop: 15 }}>
+          <InputLabel id="demo-simple-select-label">Channel Name</InputLabel>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            // value={age}
+            label="Channel Name"
+            onChange={(l) => {
+              console.log("changed value", l.target.value);
+              // this.setState({ channelId: l.id })
+            }}
+          >
+            {
+              this.state.data.map((l) => {
+
+                console.log(l.name);
+                return (
+                  <MenuItem value={l.id} >{l.name}</MenuItem>
+                )
+              })
+            }
+            {/* <MenuItem value={10}>Channel 1</MenuItem>
+            <MenuItem value={20}>Channel 2</MenuItem>
+            <MenuItem value={30}>Channel 3</MenuItem> */}
+          </Select>
+        </FormControl>
+        <FormGroup style={{ marginTop: 15 }}>
+          <FormLabel component="legend"> Language</FormLabel>
+          {
+            Object.keys(this.state.Language).map(l => {
+              return (
+                <FormControlLabel
+                  control={<Checkbox />}
+                  label={l}
+                />
+              )
+            })
+
+          }
+          {/* <FormControlLabel
+            control={<Checkbox defaultChecked />}
+            label="English"
+          />
+          <FormControlLabel control={<Checkbox />} label="Hindi" /> */}
+        </FormGroup>
+        <div style={{ marginTop: 15 }}>
+          <Upload {...props} >
+            <Button icon={<UploadOutlined style={{ color: "#8B139E", fontWeight: "bold" }} />} style={{ fontWeight: 500 }}> Upload</Button>
+          </Upload>
+        </div>
+        <div style={{ marginTop: 15 }}>
+          <FormLabel > Tags</FormLabel>
+        </div>
+        <div className="box">
+          <EditableTagGroup />
+        </div>
+        <div style={{ alignItems: "center", textAlign: "center" }}>
+          <Button variant="contained" style={{ marginTop: 35, textAlign: "center", backgroundColor: "#8B139E", color: "white", borderRadius: 5 }}>Upload Clip</Button>
+        </div>
       </div>
-      <div style={{ marginTop: 15 }}>
-        <FormLabel > Tags</FormLabel>
-      </div>
-      <div className="box">
-        <EditableTagGroup />
-      </div>
-      <div style={{ alignItems: "center", textAlign: "center" }}>
-        <Button variant="contained" style={{ marginTop: 35, textAlign: "center", backgroundColor: "#8B139E", color: "white", borderRadius: 5 }}>Upload Clip</Button>
-      </div>
-    </div>
-  );
+    );
+  }
 }
 
 export default Upload_Clip;
