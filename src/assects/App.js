@@ -4,8 +4,8 @@ import './styles/App.css'
 
 function App() {
   return (
-    <div className="App">
-      <Card className='card'>
+    <div className='app'>
+      <Card className='cardStyle'>
         <Upload_Clip/>
       </Card>
     </div>

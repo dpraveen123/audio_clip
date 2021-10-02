@@ -92,7 +92,7 @@ function Upload_Clip() {
   // <span style={{ width: 10, backgroundColor: "#8B139E", color: "#8B139E", marginRight: 2 }} >" </span>
 
   return (
-    <div>
+    <div className='clipBox'>
       <Typography sx={{ fontSize: 20, marginBottom: 3, color: "#8B139E" }} color="text.secondary" gutterBottom className="Heading">
         Post Clip
       </Typography>
@@ -137,7 +137,7 @@ function Upload_Clip() {
         <EditableTagGroup />
       </div>
       <div style={{ alignItems: "center", textAlign: "center" }}>
-        <Button variant="contained" style={{ marginTop: 25, textAlign: "center", backgroundColor: "#8B139E", color: "white", borderRadius: 5 }}>Upload Clip</Button>
+        <Button variant="contained" style={{ marginTop: 35, textAlign: "center", backgroundColor: "#8B139E", color: "white", borderRadius: 5 }}>Upload Clip</Button>
       </div>
     </div>
   );

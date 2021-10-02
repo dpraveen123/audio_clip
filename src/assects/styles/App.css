@@ -1,60 +1,78 @@
-.App{
+.app {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 600px;
+}
+
+.cardStyle {
+  height: 85%;
+  width: 40%;
+  padding-left: 35px;
+  padding-right: 35px;
+  min-width: 450px;
+}
+/* inside conteent contatiner of the card */
+
+.clipBox{
     height: 100%;
-    width: 100%;
-   
+    max-height: 100%;
+    overflow: auto;
+    padding-bottom: 30px;
+    padding-top: 35px;
+  box-sizing: border-box;
+
 }
-.card{
-    height: 80%;
-    width: 40%;
-    min-width: 480px;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform:translate(-50%,-50%);
-    box-sizing: border-box;
-    padding: 40px;
-    padding-top: 20px;
-    max-height: 80%;
-    overflow-y: scroll;
-    background-color: red;
+.clipBox::-webkit-scrollbar {
+  width: 0;
+ 
+}
+/* .clipBox::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px red; 
+  border-radius: 10px;
 }
 
+.clipBox::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px green; 
+} */
+.title {
+  width: 100%;
+  font-size: large;
+  margin-bottom: 20px;
+}
+.box {
+  height: 50px;
+  border: 1px solid rgb(70, 69, 69);
+  border-radius: 5px;
+  padding: 12px;
+  font-size: 18px;
+  margin-top: 20px;
+  background-color: "#8B139E";
+  overflow: hidden;
+  height: auto;
+}
+.Heading {
+  text-align: center;
+  /* margin-bottom: 20px; */
+  /* font-size: 50px; */
+}
 
-.title{
-    width: 100%;
-    font-size: large;
-margin-bottom: 20px;
-}
-.box
-{
-    height: 50px;
-    border: 1px solid rgb(70, 69, 69);
-    border-radius:5px;
-    padding: 12px;
-    font-size: 18px;
-    margin-top: 20px;
-    background-color: "#8B139E";
-    overflow: hidden;
-    height: auto;
-}
-.Heading{
-    text-align: center;
-    /* margin-bottom: 20px; */
-    /* font-size: 50px; */
-}
-
-.ant-tag-close-icon{
-    color: "#8B139E";
+.ant-tag-close-icon {
+  color: "#8B139E";
 }
 
 /* media queries for resposive */
 
 @media (max-width: 425px) {
-    
-    .card{
-       width: 100%;
-       background-color: red;
-
-    }
-   
+  .cardStyle{
+    width: 100%;
+    height: 100%;
   }
+  .clipBox {
+    width: 100%;
+    /* background-color:blue; */
+  }
+}
