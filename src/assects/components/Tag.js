@@ -41,7 +41,7 @@ class EditableTagGroup extends React.Component {
   };
 
   handleEditInputChange = e => {
-    this.setState({ editInputValue: e.target.value });
+    this.setState({editInputValue: e.target.value });
   };
 
   handleEditInputConfirm = () => {
