@@ -146,6 +146,9 @@ class Upload_Clip extends React.Component {
 
   }
 
+  formValidations = ()=>{
+    // if(this.state.channelId!=''&&this.state.description != ''&&)
+  }
 
   postData = () => {
     this.state.Language = []
@@ -183,7 +186,6 @@ class Upload_Clip extends React.Component {
 
 
     this.setState({
-
       checked: this.state.checked
     })
     console.log("ischecked", this.state.checked);
