@@ -3,15 +3,11 @@ import React from 'react';
 import { Input, Tooltip } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import 'antd/dist/antd.css';
+// import { EventRegister } from 'react-events-listeners'
 
 class EditableTagGroup extends React.Component {
   constructor(props) {
     super(props);
-
-  }
-
-  componentDidMount = () => {
-    console.log(this.props.callBack);
   }
   state = {
     tags: [],
@@ -20,6 +16,18 @@ class EditableTagGroup extends React.Component {
     editInputIndex: -1,
     editInputValue: '',
   };
+
+  componentDidMount = () => {
+    console.log(this.props.callBack);
+    // this.listener = EventRegister.addEventListener('myCustomEvent', (tags) => {
+    //   this.setState({
+    //     tags: []
+    //   })
+    // })
+  }
+ emptyTags=()=>{
+    this.setState({tags:[]})
+  }
 
   handleClose = removedTag => {
     const tags = this.state.tags.filter(tag => tag !== removedTag);

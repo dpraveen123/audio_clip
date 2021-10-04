@@ -4,6 +4,8 @@ import {
   Button,
 
 } from "antd";
+// import { EventRegister } from 'react-events-listeners'
+import swal from 'sweetalert';
 import { DownOutlined, UploadOutlined } from "@ant-design/icons";
 import EditableTagGroup from "./Tag";
 import TextField from "@mui/material/TextField";
@@ -18,68 +20,70 @@ import FormLabel from "@mui/material/FormLabel";
 import Typography from '@mui/material/Typography';
 import Title from "antd/lib/skeleton/Title";
 import axios from 'axios'
-// import Button from '@mui/material/Button';
-// const onClick = ({ key }) => {
-//   message.info(`Click on item ${key}`);
-// };
-
-// const menu = (
-//   <Menu onClick={onClick}>
-//     <Menu.Item key="1">1st menu item</Menu.Item>
-//     <Menu.Item key="2">2nd menu item</Menu.Item>
-//     <Menu.Item key="3">3rd menu item</Menu.Item>
-//   </Menu>
-// );
-
-// const CheckboxGroup = Checkbox.Group;
 
 
 
 
-// defaultFileList: [
-//   {
-//     uid: "1",
-//     name: "xxx.png",
-//     status: "done",
-//     response: "Server Error 500", // custom error message to show
-//     url: "http://www.baidu.com/xxx.png",
-//   },
-//   {
-//     uid: "2",
-//     name: "yyy.png",
-//     status: "done",
-//     url: "http://www.baidu.com/yyy.png",
-//   },
-//   {
-//     uid: "3",
-//     name: "zzz.png",
-//     status: "error",
-//     response: "Server Error 500", // custom error message to show
-//     url: "http://www.baidu.com/zzz.png",
-//   },
-// ],
 var props = {
-  action: "https://www.mocky.io/v2/5cc8019d300000980a055e76",
+  // action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
+  // status: 'done',
   onChange({ file, fileList }) {
-    if (file.status !== "uploading") {
-      console.log(file);
+    if (file.status !== 'uploading') {
+      console.log("file status", file.status);
+      // file.status = 'done'
+      console.log("files", fileList,);
     }
-  }
+  },
+  defaultFileList: [
+    // {
+    //   uid: '1',
+    //   name: 'xxx.png',
+    //   status: 'done',
+    //   response: 'Server Error 500', // custom error message to show
+    //   url: 'http://www.baidu.com/xxx.png',
+    // },
+    // {
+    //   uid: '2',
+    //   name: 'yyy.png',
+    //   status: 'done',
+    //   url: 'http://www.baidu.com/yyy.png',
+    // },
+    // {
+    //   uid: '3',
+    //   name: 'zzz.png',
+    //   status: 'error',
+    //   response: 'Server Error 500', // custom error message to show
+    //   url: 'http://www.baidu.com/zzz.png',
+    // },
+  ],
 };
+// var props = {
+//   action: "https://elymentsstoragedev.blob.core.windows.net/audio-cast/e14620572f544e84a3587532864d74b3?st=2021-08-06T01%3A37%3A02Z&se=2021-08-06T04%3A57%3A02Z&sp=w&sv=2018-03-28&sr=b&sig=eeRRQEW2uJsGrHxwjI6xF0UB4%2BT1d%2F3gJFiX%2B0sJ5X0%3D",
+//   onChange({ file, fileList }) {
+//     if (file.status !== "uploading") {
+
+//       console.log(file);
+//     }
+//   }
+// };
 
 
 class Upload_Clip extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      isDescriptionEmpty: 0,
+      isChannelIdEmpty: 0,
+      isLanguageEmpty: 0,
       data: [],
       Language: [],
       channelId: '',
-      description: 'sample',
+      description: '',
       duration: 10,
       languages: [],
       objectId: 'sample',
       tags: [],
+      isEmpty: 0,
       checked: [
         {
           lan: "English",
@@ -136,30 +140,67 @@ class Upload_Clip extends React.Component {
   }
 
   componentDidMount() {
-    axios.get(`https://virtserver.swaggerhub.com/fragmadata/Clips-WebUpload/1.0.0/api/internal/Channels`)
+    let config = {
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json"
+      }
+    }
+    axios.get(`https://virtserver.swaggerhub.com/fragmadata/Clips-WebUpload/1.0.0/api/internal/Channels`, config)
       .then(res => {
-        const persons = res.data;
-        // console.log(persons);
-        this.setState({ data: persons });
+        console.log("config", res.data);
+        this.setState({ data: res.data });
         console.log(this.state.data);
+
       })
 
   }
 
-  formValidations = ()=>{
-    // if(this.state.channelId!=''&&this.state.description != ''&&)
+  formValidations = () => {
+
+    if (this.state.description == '') {
+      this.setState({ isDescriptionEmpty: 1 })
+    }
+    else {
+      this.setState({ isDescriptionEmpty: 0 })
+    }
+    if (this.state.channelId == '') {
+      this.setState({ isChannelIdEmpty: 1 })
+    }
+    else {
+      this.setState({ isChannelIdEmpty: 0 })
+    }
+    if (this.state.Language.length == 0) {
+      this.setState({ isLanguageEmpty: 1 })
+    }
+    else {
+      this.setState({ isLanguageEmpty: 0 })
+    }
+
+    if (this.state.channelId == '' || this.state.description == '' || this.state.Language.length == 0) {
+      this.setState({ isEmpty: 1 })
+      // alert("please fill out required fields.")
+      // this.postData()
+      // console.log("isEmpty");
+    }
+    else {
+      this.postData()
+    }
+    // if(this.state.description!='')
   }
 
   postData = () => {
-    this.state.Language = []
-    this.setState({ Language: this.state.Language })
-    this.state.checked.map(l => {
-      if (l.isChecked === true) {
-        this.state.Language = this.state.Language.concat(l.index)
-        this.setState({ Language: this.state.Language })
-      }
-    })
-    console.log("selected languages are", this.state.Language)
+
+    axios.get(`https://chatdev.elyments.in/api/azure/upload/url/1?container=audio`)
+      .then(res => {
+        console.log("audio", res.data);
+        this.setState({ objectId: res.data.objectId })
+        // this.setState({ data: persons });
+        // console.log(this.state.data);
+      })
+
+    // this.formValidations()
+    // console.log("selected languages are", this.state.Language)
     var userData = {
       channelId: this.state.channelId,
       description: this.state.description,
@@ -169,17 +210,53 @@ class Upload_Clip extends React.Component {
       tags: this.state.tags
     }
     console.log(userData);
-    axios.post(`https://virtserver.swaggerhub.com/fragmadata/Clips-WebUpload/1.0.0/api/internal/Clips`, { userData })
+    let config = {
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+      }
+    }
+    axios.post(`https://clipsdev.elyments.in/api/internal/Clips`, userData, config)
       .then(res => {
         console.log(res);
         console.log(res.data);
+        swal({
+          title: "Good job!",
+          text: "Succesfully uploaded clip",
+          icon: "success",
+          button: "Okay",
+        });
+        this.state.channelId = ""
+        this.setState({ channelId: this.state.channelId })
+        this.setState({ description: '' })
+        this.setState({ duration: '' })
+        for (var i = 0; i < this.state.checked.length; i++) {
+          this.state.checked[i].isChecked = false;
+          this.setState({ checked: this.state.checked })
+        }
+        // EventRegister.emit('myCustomEvent', 'it works!!!')
+        this.setState({ Language: [] })
+        this.setState({ objectId: '' })
+
+        this.setState({ tags: [] })
+        this.removeTags()
+      })
+      .catch((e) => {
+        swal({
+          title: "An Error has occured!",
+          text: "Please try uploading again...",
+          icon: "warning",
+          button: "Okay",
+        });
       })
   }
 
-
+  removeTags = () => {
+    this.setState({ tags: [] })
+  }
   getTags = (data) => {
     this.setState({ tags: data })
-    console.log("data succes", data);
+    // console.log("data succes", data);
   }
   handleChange = (index, value) => {
     this.state.checked[index].isChecked = !this.state.checked[index].isChecked
@@ -188,14 +265,18 @@ class Upload_Clip extends React.Component {
     this.setState({
       checked: this.state.checked
     })
-    console.log("ischecked", this.state.checked);
-
+    // console.log("ischecked", this.state.checked);
+    this.state.Language = []
+    this.setState({ Language: this.state.Language })
+    this.state.checked.map(l => {
+      if (l.isChecked === true) {
+        this.state.Language = this.state.Language.concat(l.index)
+        this.setState({ Language: this.state.Language })
+      }
+    })
     // this.state.languages.concat(event)
   };
 
-
-
-  // function Upload_Clip() {
 
   render() {
     return (
@@ -208,51 +289,55 @@ class Upload_Clip extends React.Component {
           label="Title"
           variant="outlined"
           className="title"
-          required
-          // helperText="please fill out this field"
-          // error
+          required={true}
+          value={this.state.description}
           onChange={(value) => {
-            console.log("discription", value.target.value);
+            // console.log("discription", value.target.value);
             // this.state.description = value
             this.setState({ description: value.target.value })
+
           }
             // console.log("description",)
           }
         />
-        <FormControl fullWidth style={{ marginTop: 15 }}>
+        <p style={{ fontSize: 12, color: "red" }}> {this.state.isDescriptionEmpty === 1 ? "Please fill out this field." : ""}</p>
+        <FormControl fullWidth style={{ marginTop: 15 }} required
+          helperText={this.state.isChannelIdEmpty === 1 ? "Please fill out this field." : ""}
+        >
           <InputLabel id="demo-simple-select-label">Channel Name</InputLabel>
           <Select
+            // required
+            // filled={true}
             labelId="demo-simple-select-label"
             id="demo-simple-select"
             // value={age}
             label="Channel Name"
+            value={this.state.channelId}
+
             onChange={(l) => {
-              console.log("changed value", l.target.value);
+              // console.log("changed value", l.target.value);
               this.setState({ channelId: l.target.value })
             }}
           >
             {
               this.state.data.map((l) => {
-
                 // console.log(l);
                 return (
-                  <MenuItem value={l.id} >{l.name}</MenuItem>
+                  <MenuItem value={l.id} >{l.name} </MenuItem>
                 )
               })
             }
-            {/* <MenuItem value={10}>Channel 1</MenuItem>
-            <MenuItem value={20}>Channel 2</MenuItem>
-            <MenuItem value={30}>Channel 3</MenuItem> */}
           </Select>
         </FormControl>
-        <FormGroup style={{ marginTop: 15 }}>
+        <p style={{ fontSize: 12, color: "red" }}> {this.state.isChannelIdEmpty === 1 ? "Please fill out this field." : ""}</p>
+        <FormGroup style={{ marginTop: 15 }}  >
           <FormLabel component="legend"> Language</FormLabel>
           {
             this.state.checked.map((l, index) => {
-              console.log(index)
 
               return (
                 <FormControlLabel
+
                   control={<Checkbox checked={l.isChecked} onChange={() => this.handleChange(index, l.lan)} />}
                   label={l.lan}
                 />
@@ -260,14 +345,11 @@ class Upload_Clip extends React.Component {
             })
 
           }
-          {/* <FormControlLabel
-            control={<Checkbox defaultChecked />}
-            label="English"
-          />
-          <FormControlLabel control={<Checkbox />} label="Hindi" /> */}
         </FormGroup>
+        <p style={{ fontSize: 12, color: "red" }}> {this.state.isLanguageEmpty === 1 ? "Please select anyone out this fields." : ""}</p>
+
         <div style={{ marginTop: 15 }}>
-          <Upload {...props} >
+          <Upload {...props} accept={".mp3"} >
             <Button icon={<UploadOutlined style={{ color: "#8B139E", fontWeight: "bold" }} />} style={{ fontWeight: 500 }}> Upload</Button>
           </Upload>
         </div>
@@ -278,7 +360,7 @@ class Upload_Clip extends React.Component {
           <EditableTagGroup callBack={this.getTags} />
         </div>
         <div style={{ alignItems: "center", textAlign: "center" }}>
-          <Button onClick={this.postData} variant="contained" style={{ marginTop: 35, textAlign: "center", backgroundColor: "#8B139E", color: "white", borderRadius: 5 }}>Upload Clip</Button>
+          <Button onClick={this.formValidations} variant="contained" style={{ marginTop: 35, textAlign: "center", backgroundColor: "#8B139E", color: "white", borderRadius: 5 }}>Upload Clip</Button>
         </div>
       </div>
     );
