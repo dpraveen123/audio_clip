@@ -143,12 +143,12 @@ class Upload_Clip extends React.Component {
     let config = {
       headers: {
         "Accept": "application/json",
-        "Content-Type": "application/json"
+        // "Content-Type": "application/json"
       }
     }
-    axios.get(`https://virtserver.swaggerhub.com/fragmadata/Clips-WebUpload/1.0.0/api/internal/Channels`, config)
+    axios.get(`https://clipsdev.elyments.in/api/internal/Channels`, config)
       .then(res => {
-        console.log("config", res.data);
+        console.log("config", res.data, config);
         this.setState({ data: res.data });
         console.log(this.state.data);
 
@@ -191,13 +191,13 @@ class Upload_Clip extends React.Component {
 
   postData = () => {
 
-    axios.get(`https://chatdev.elyments.in/api/azure/upload/url/1?container=audio`)
-      .then(res => {
-        console.log("audio", res.data);
-        this.setState({ objectId: res.data.objectId })
-        // this.setState({ data: persons });
-        // console.log(this.state.data);
-      })
+    // axios.get(`https://chatdev.elyments.in/api/azure/upload/url/1?container=audio`)
+    //   .then(res => {
+    //     console.log("audio", res.data);
+    //     this.setState({ objectId: res.data.objectId })
+    //     // this.setState({ data: persons });
+    //     // console.log(this.state.data);
+    //   })
 
     // this.formValidations()
     // console.log("selected languages are", this.state.Language)
