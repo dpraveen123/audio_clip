@@ -209,14 +209,14 @@ class Upload_Clip extends React.Component {
       objectId: "e14620572f544e84a3587532864d74b3",
       tags: this.state.tags
     }
-    console.log(userData);
+    console.log(userData,"this is final data to upload");
     let config = {
       headers: {
         "Accept": "application/json",
         "Content-Type": "application/json",
       }
     }
-    axios.post(`https://clipsdev.elyments.in/api/internal/Clips`, userData, config)
+    axios.post(`https://virtserver.swaggerhub.com/fragmadata/Clips-WebUpload/1.0.0/api/internal/Clips`, userData, config)
       .then(res => {
         console.log(res);
         console.log(res.data);
@@ -252,7 +252,9 @@ class Upload_Clip extends React.Component {
   }
 
   removeTags = () => {
-    this.setState({ tags: [] })
+    this.state.tags=[];
+    this.setState({ tags: this.state.tags })
+    console.log("doing tags empty",this.state.tags)
   }
   getTags = (data) => {
     this.setState({ tags: data })
@@ -357,7 +359,7 @@ class Upload_Clip extends React.Component {
           <FormLabel > Tags</FormLabel>
         </div>
         <div className="box">
-          <EditableTagGroup callBack={this.getTags} />
+          <EditableTagGroup callBack={this.getTags} tags={this.state.tags} />
         </div>
         <div style={{ alignItems: "center", textAlign: "center" }}>
           <Button onClick={this.formValidations} variant="contained" style={{ marginTop: 35, textAlign: "center", backgroundColor: "#8B139E", color: "white", borderRadius: 5 }}>Upload Clip</Button>
