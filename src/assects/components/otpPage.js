@@ -62,9 +62,11 @@ class OtpPage extends Component {
                 console.log(res.data);
                 console.log("accesToken", res.data.accessToken);
                 this.state.accessToken = res.data.accessToken
-                this.setState({ otpVerified: 1 })
                 this.setState({ accessToken: this.state.accessToken })
             })
+            .then(
+                this.setState({ otpVerified: 1 })
+            )
     }
     render() {
         return (
