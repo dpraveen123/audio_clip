@@ -39,7 +39,7 @@ var props = {
     if (file.status !== 'uploading') {
       console.log("file status", file.status);
       // file.status = 'done'
-      console.log("files", fileList,);
+      // console.log("files", fileList,);
     }
   },
   defaultFileList: [
@@ -70,7 +70,7 @@ var props = {
 //   onChange({ file, fileList }) {
 //     if (file.status !== "uploading") {
 
-//       console.log(file);
+      // console.log(file);
 //     }
 //   }
 // };
@@ -148,7 +148,8 @@ class Upload_Clip extends React.Component {
   }
 
   componentDidMount() {
-    console.log("props in main page", this.props.location.accessToken);
+    console.log("accsess token from otppage is",this.props.location.accessToken)
+    // console.log("props in main page", this.props.location.accessToken);
     let config = {
       headers: {
         "Accept": "application/json",
@@ -157,9 +158,9 @@ class Upload_Clip extends React.Component {
     }
     axios.get(`https://clipsdev.elyments.in/api/internal/Channels`, config)
       .then(res => {
-        console.log("config", res.data, config);
+        // console.log("config", res.data, config);
         this.setState({ data: res.data });
-        console.log(this.state.data);
+        // console.log(this.state.data);
 
       })
 
@@ -202,10 +203,10 @@ class Upload_Clip extends React.Component {
 
     // axios.get(`https://chatdev.elyments.in/api/azure/upload/url/1?container=audio`)
     //   .then(res => {
-    //     console.log("audio", res.data);
+        // console.log("audio", res.data);
     //     this.setState({ objectId: res.data.objectId })
     //     // this.setState({ data: persons });
-    //     // console.log(this.state.data);
+        // console.log(this.state.data);
     //   })
 
     // this.formValidations()
@@ -218,7 +219,7 @@ class Upload_Clip extends React.Component {
       objectId: "e14620572f544e84a3587532864d74b3",
       tags: this.state.tags
     }
-    console.log(userData, "this is final data to upload");
+    // console.log(userData, "this is final data to upload");
     let config = {
       headers: {
         "Accept": "application/json",
@@ -227,8 +228,8 @@ class Upload_Clip extends React.Component {
     }
     axios.post(`https://virtserver.swaggerhub.com/fragmadata/Clips-WebUpload/1.0.0/api/internal/Clips`, userData, config)
       .then(res => {
-        console.log(res);
-        console.log(res.data);
+        // console.log(res);
+        // console.log(res.data);
         swal({
           title: "Good job!",
           text: "Succesfully uploaded clip",
@@ -263,7 +264,7 @@ class Upload_Clip extends React.Component {
   removeTags = () => {
     this.state.tags = [];
     this.setState({ tags: this.state.tags })
-    console.log("doing tags empty", this.state.tags)
+    // console.log("doing tags empty", this.state.tags)
   }
   getTags = (data) => {
     this.setState({ tags: data })
