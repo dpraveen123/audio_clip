@@ -20,6 +20,14 @@ import FormLabel from "@mui/material/FormLabel";
 import Typography from '@mui/material/Typography';
 import Title from "antd/lib/skeleton/Title";
 import axios from 'axios'
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link,
+  useLocation, withRouter
+
+} from "react-router-dom";
 
 
 
@@ -140,6 +148,7 @@ class Upload_Clip extends React.Component {
   }
 
   componentDidMount() {
+    console.log("props in main page", this.props.location.accessToken);
     let config = {
       headers: {
         "Accept": "application/json",
@@ -209,7 +218,7 @@ class Upload_Clip extends React.Component {
       objectId: "e14620572f544e84a3587532864d74b3",
       tags: this.state.tags
     }
-    console.log(userData,"this is final data to upload");
+    console.log(userData, "this is final data to upload");
     let config = {
       headers: {
         "Accept": "application/json",
@@ -252,9 +261,9 @@ class Upload_Clip extends React.Component {
   }
 
   removeTags = () => {
-    this.state.tags=[];
+    this.state.tags = [];
     this.setState({ tags: this.state.tags })
-    console.log("doing tags empty",this.state.tags)
+    console.log("doing tags empty", this.state.tags)
   }
   getTags = (data) => {
     this.setState({ tags: data })
@@ -369,4 +378,4 @@ class Upload_Clip extends React.Component {
   }
 }
 
-export default Upload_Clip;
+export default withRouter(Upload_Clip);

@@ -6,7 +6,7 @@ import {
     Switch,
     Route,
     Link,
-    useLocation,withRouter
+    useLocation, withRouter
 
 } from "react-router-dom";
 
@@ -26,7 +26,7 @@ import axios from "axios";
 //         <div>hello world</div>
 //     )
 // }
- class OtpPage extends Component {
+class OtpPage extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -34,17 +34,20 @@ import axios from "axios";
             mobileNumber: '',
             countryCode: '',
             otpVerified: 0,
-            mobileNumber:''
+            accessToken: ''
         }
     }
     componentDidMount = () => {
         // const { router, params, location, routes } = this.props
-    //   var location=useLocation();
+        //   var location=useLocation();
         // console.log(location,"location")
         // const { mobilenumber } = this.props.location.state
         // console.log("props in otppage", mobilenumber);
-        console.log(this.props,"is props in otppage");
-        this.setState({mobileNumber:this.props.location.mobileNumber})
+        this.setState({ mobileNumber: this.props.location.mobileNumber.substring(3, 13) })
+        this.setState({ countryCode: this.props.location.mobileNumber.substring(0, 3) })
+        console.log(this.state.mobileNumber, this.state.countryCode, "is props in otppage");
+
+
     }
     submitOtp = () => {
         let userData = {
@@ -57,7 +60,10 @@ import axios from "axios";
             .then(res => {
                 console.log(res);
                 console.log(res.data);
+                console.log("accesToken", res.data.accessToken);
+                this.state.accessToken = res.data.accessToken
                 this.setState({ otpVerified: 1 })
+                this.setState({ accessToken: this.state.accessToken })
             })
     }
     render() {
@@ -87,10 +93,18 @@ import axios from "axios";
                     className="title"
                     required={true}
                     style={{ marginTop: 30 }}
+                    onChange={(value) => {
+                        this.setState({ otp: value.target.value })
+                    }}
                 />
                 {/* <p style={{ fontSize: 12, color: "red" }}> {this.state.otpVerified === 1 ? "Please fill out this field." : ""}</p> */}
                 <div style={{ alignItems: "center", textAlign: "center" }}>
-                    <Link to="/home"><Button
+                    <Link to={{
+                        pathname: "/home",
+                        accessToken: this.state.accessToken
+                    }}
+
+                    ><Button
                         onClick={this.submitOtp}
                         variant="contained"
                         style={{
@@ -101,8 +115,8 @@ import axios from "axios";
                             borderRadius: 5,
                         }}
                     >
-                        Submit OTP
-                    </Button></Link>
+                            Submit OTP
+                        </Button></Link>
                 </div>
             </div>
         );

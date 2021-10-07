@@ -1,12 +1,14 @@
 import React, { Component } from "react";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
+
 import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Link,NavLink,
-  useLocation
+  Link, NavLink,
+  useLocation,
+  useHistory
 } from "react-router-dom";
 
 import {
@@ -25,9 +27,9 @@ export default class Login extends Component {
       // countryCode:''
     }
   }
-componentDidMount=()=>{
-  console.log("this props is from login.js",this.props)
-}
+  componentDidMount = () => {
+    console.log("this props is from login.js", this.props)
+  }
   sendOtp = () => {
 
     let userData = {
@@ -37,11 +39,12 @@ componentDidMount=()=>{
     console.log(userData);
     axios.post('https://identitydev.elyments.in/api/Identity/GenerateOtp/V2', userData)
       .then(res => {
-        console.log("res is",res);
+        console.log("res is", res);
         console.log(res.data);
+        useHistory().push('/otppage');
       })
-      .catch(e=>{
-        console.log("error is",e)
+      .catch(e => {
+        console.log("error is", e)
       })
 
   }
@@ -76,27 +79,27 @@ componentDidMount=()=>{
           }}
         />
         <div style={{ alignItems: "center", textAlign: "center" }}>
-    
-       <NavLink to={{
+
+          <NavLink to={{
             pathname: "/otppage",
-            mobileNumber: this.state.mobileNumber 
-          }} >   
-              <Button
-            onClick={this.sendOtp}
-            variant="contained"
-            disabled={this.state.isDisabled}
-            style={{
-              marginTop: 35,
-              textAlign: "center",
-              backgroundColor: "#8B139E",
-              color: "white",
-              borderRadius: 5,
-            }}
-          >
+            mobileNumber: this.state.mobileNumber
+          }} >
+            <Button
+              onClick={this.sendOtp}
+              variant="contained"
+              disabled={this.state.isDisabled}
+              style={{
+                marginTop: 35,
+                textAlign: "center",
+                backgroundColor: "#8B139E",
+                color: "white",
+                borderRadius: 5,
+              }}
+            >
               Send OTP
             </Button>
-            </NavLink>
-      
+          </NavLink>
+
         </div>
       </div>
     );
