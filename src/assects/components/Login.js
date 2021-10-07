@@ -5,7 +5,7 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Link,
+  Link,NavLink,
   useLocation
 } from "react-router-dom";
 
@@ -25,7 +25,9 @@ export default class Login extends Component {
       // countryCode:''
     }
   }
-
+componentDidMount=()=>{
+  console.log("this props is from login.js",this.props)
+}
   sendOtp = () => {
 
     let userData = {
@@ -35,8 +37,11 @@ export default class Login extends Component {
     console.log(userData);
     axios.post('https://identitydev.elyments.in/api/Identity/GenerateOtp/V2', userData)
       .then(res => {
-        console.log(res);
+        console.log("res is",res);
         console.log(res.data);
+      })
+      .catch(e=>{
+        console.log("error is",e)
       })
 
   }
@@ -71,10 +76,12 @@ export default class Login extends Component {
           }}
         />
         <div style={{ alignItems: "center", textAlign: "center" }}>
-          <Link to={{
+    
+       <NavLink to={{
             pathname: "/otppage",
-            state: { mobilenumber: this.state.mobileNumber }
-          }}>       <Button
+            mobileNumber: this.state.mobileNumber 
+          }} >   
+              <Button
             onClick={this.sendOtp}
             variant="contained"
             disabled={this.state.isDisabled}
@@ -87,7 +94,9 @@ export default class Login extends Component {
             }}
           >
               Send OTP
-            </Button></Link>
+            </Button>
+            </NavLink>
+      
         </div>
       </div>
     );

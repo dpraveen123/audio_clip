@@ -13,23 +13,23 @@ import {
 function App() {
   return (
     <Router>
-      <Switch>
+      {/* <Switch> */}
         <div className='app'>
           <Card className='cardStyle'>
           <Route exact path="/">
               <Login />
             </Route>
-            <Route exact path="/otppage">
+            <Route  path="/otppage">
               <OtpPage />
             </Route>
-            <Route exact path="/home">
+            <Route  path="/home">
               <Upload_Clip />
             </Route>
             {/* <Upload_Clip/> */}
 
           </Card>
         </div>
-      </Switch>
+      {/* </Switch> */}
     </Router>
 
 

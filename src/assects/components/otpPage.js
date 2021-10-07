@@ -6,7 +6,8 @@ import {
     Switch,
     Route,
     Link,
-    useLocation
+    useLocation,withRouter
+
 } from "react-router-dom";
 
 import {
@@ -17,21 +18,33 @@ import {
 import axios from "axios";
 
 // var location = useLocation();
-export default class OtpPage extends Component {
+// export default function OtpPage(props){
+//     var location=useLocation();
+//     // console.log("props from otppage is",props)
+//     console.log(location,"location")
+//     return(
+//         <div>hello world</div>
+//     )
+// }
+ class OtpPage extends Component {
     constructor(props) {
         super(props);
         this.state = {
             otp: '',
             mobileNumber: '',
             countryCode: '',
-            otpVerified: 0
-
+            otpVerified: 0,
+            mobileNumber:''
         }
     }
     componentDidMount = () => {
+        // const { router, params, location, routes } = this.props
+    //   var location=useLocation();
+        // console.log(location,"location")
         // const { mobilenumber } = this.props.location.state
         // console.log("props in otppage", mobilenumber);
-        // console.log(location);
+        console.log(this.props,"is props in otppage");
+        this.setState({mobileNumber:this.props.location.mobileNumber})
     }
     submitOtp = () => {
         let userData = {
@@ -65,6 +78,7 @@ export default class OtpPage extends Component {
                     className="title"
                     disabled
                     required={true}
+                    value={this.state.mobileNumber}
                 />
                 <TextField
                     id="outlined-basic"
@@ -94,3 +108,4 @@ export default class OtpPage extends Component {
         );
     }
 }
+export default withRouter(OtpPage);
