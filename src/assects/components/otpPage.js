@@ -64,6 +64,8 @@ class OtpPage extends Component {
                 this.state.accessToken = res.data.accessToken
                 this.setState({ otpVerified: 1 })
                 this.setState({ accessToken: this.state.accessToken })
+                alert("sucsess otp verified",this.state.accessToken)
+                this.props.history.push({pathname:'/home',accessToken:this.state.accessToken})
             })
     }
     render() {
@@ -99,10 +101,10 @@ class OtpPage extends Component {
                 />
                 {/* <p style={{ fontSize: 12, color: "red" }}> {this.state.otpVerified === 1 ? "Please fill out this field." : ""}</p> */}
                 <div style={{ alignItems: "center", textAlign: "center" }}>
-                    <Link to={{
+                    {/* <Link to={{
                         pathname: "/home",
                         accessToken: this.state.accessToken
-                    }}
+                    }} */}
 
                     ><Button
                         onClick={this.submitOtp}
@@ -116,7 +118,8 @@ class OtpPage extends Component {
                         }}
                     >
                             Submit OTP
-                        </Button></Link>
+                        </Button>
+                        {/* </Link> */}
                 </div>
             </div>
         );
