@@ -1,22 +1,11 @@
 import React, { Component } from "react";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link, NavLink,
-  useLocation,
-  useHistory
-} from "react-router-dom";
-
-import {
-  Upload,
-  Button,
-
-} from "antd";
+import { GENERATE_OTP } from "../config/endpoints";
+import { NavLink } from "react-router-dom";
+import { Button } from "antd";
 import axios from "axios";
+import swal from 'sweetalert';
 
 export default class Login extends Component {
   constructor(props) {
@@ -24,27 +13,27 @@ export default class Login extends Component {
     this.state = {
       mobileNumber: '',
       isDisabled: true
-      // countryCode:''
     }
   }
-  componentDidMount = () => {
-    console.log("this props is from login.js", this.props)
-  }
-  sendOtp = () => {
 
+  sendOtp = () => {
     let userData = {
       MobileNumber: this.state.mobileNumber.substring(3, 13),
       CountryCode: this.state.mobileNumber.substring(0, 3)
     }
     console.log(userData);
-    axios.post('https://identitydev.elyments.in/api/Identity/GenerateOtp/V2', userData)
+    axios.post(GENERATE_OTP, userData)
       .then(res => {
-        console.log("res is", res);
-        console.log(res.data);
-        // useHistory().push('/otppage');
+        // console.log(res.data);
       })
       .catch(e => {
         console.log("error is", e)
+        swal({
+          title: "Oops! An Error has occured!",
+          text: "Please try again...",
+          icon: "warning",
+          button: "Okay",
+        });
       })
 
   }

@@ -14,21 +14,21 @@ function App() {
   return (
     <Router>
       {/* <Switch> */}
-        <div className='app'>
-          <Card className='cardStyle'>
+      <div className='app'>
+        <Card className='cardStyle'>
           <Route exact path="/">
-              <Login />
-            </Route>
-            <Route  path="/otppage">
-              <OtpPage />
-            </Route>
-            <Route  path="/home">
-              <Upload_Clip />
-            </Route>
-            {/* <Upload_Clip/> */}
+            <Login />
+          </Route>
+          <Route path="/otppage">
+            <OtpPage />
+          </Route>
+          <Route path="/home">
+            <Upload_Clip />
+          </Route>
+          {/* <Upload_Clip/> */}
 
-          </Card>
-        </div>
+        </Card>
+      </div>
       {/* </Switch> */}
     </Router>
 

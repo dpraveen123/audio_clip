@@ -1,31 +1,11 @@
 import React, { Component } from "react";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import {
-    BrowserRouter as Router,
-    Switch,
-    Route,
-    Link,
-    useLocation, withRouter
-
-} from "react-router-dom";
-
-import {
-    Upload,
-    Button,
-
-} from "antd";
+import { withRouter } from "react-router-dom";
+import { VERIFY_OTP } from "../config/endpoints";
+import { Button } from "antd";
 import axios from "axios";
 
-// var location = useLocation();
-// export default function OtpPage(props){
-//     var location=useLocation();
-//     // console.log("props from otppage is",props)
-//     console.log(location,"location")
-//     return(
-//         <div>hello world</div>
-//     )
-// }
 class OtpPage extends Component {
     constructor(props) {
         super(props);
@@ -37,40 +17,30 @@ class OtpPage extends Component {
             accessToken: ''
         }
     }
+
     componentDidMount = () => {
-        // const { router, params, location, routes } = this.props
-        //   var location=useLocation();
-        // console.log(location,"location")
-        // const { mobilenumber } = this.props.location.state
-        // console.log("props in otppage", mobilenumber);
         if (this.props.location.mobileNumber !== undefined) {
             this.setState({ mobileNumber: this.props.location.mobileNumber.substring(3, 13) })
             this.setState({ countryCode: this.props.location.mobileNumber.substring(0, 3) })
-            console.log(this.state.mobileNumber, this.state.countryCode, "is props in otppage");
+            // console.log(this.state.mobileNumber, this.state.countryCode, "is props in otppage");
         }
-
-
-
     }
+
     submitOtp = () => {
-
-
         let userData = {
             CountryCode: this.state.countryCode,
             Otp: this.state.otp,
             DeviceToken: "xyz",
             MobileNumber: this.state.mobileNumber
         }
-        axios.post('https://identitydev.elyments.in/api/Identity/VerifyOtp/V2', userData)
+        axios.post(VERIFY_OTP, userData)
             .then(res => {
                 this.setState({ otpVerified: 1 })
-                console.log(res);
-                console.log(res.data);
-                console.log("accesToken", res.data.accessToken);
+                // console.log(res.data);
+                // console.log("accesToken", res.data.accessToken);
                 this.state.accessToken = res.data.accessToken
                 this.setState({ accessToken: this.state.accessToken })
                 localStorage.setItem('accessToken', this.state.accessToken)
-
                 this.props.history.replace({ pathname: '/home', accessToken: this.state.accessToken })
             })
             .catch((e) => {
@@ -110,13 +80,8 @@ class OtpPage extends Component {
                     }}
                 />
                 <p style={{ fontSize: 12, color: "red", }}> {this.state.otpVerified === 0 ? "Invalid OTP" : ""}</p>
-                {/* <p style={{ fontSize: 12, color: "red" }}> {this.state.otpVerified === 1 ? "Please fill out this field." : ""}</p> */}
-                <div style={{ alignItems: "center", textAlign: "center" }}>
-                    {/* <Link to={{
-                        pathname: "/home",
-                        accessToken: this.state.accessToken
-                    }} */}
 
+                <div style={{ alignItems: "center", textAlign: "center" }}>
                     <Button
                         onClick={this.submitOtp}
                         variant="contained"
@@ -130,7 +95,7 @@ class OtpPage extends Component {
                     >
                         Submit OTP
                     </Button>
-                    {/* </Link> */}
+
                 </div>
             </div>
         );

@@ -1,14 +1,7 @@
 import React from "react";
-import {
-  Upload,
-  Button,
-  message
-
-} from "antd";
-// import reqwest from 'reqwest';
-// import { EventRegister } from 'react-events-listeners'
+import { Upload, Button } from "antd";
 import swal from 'sweetalert';
-import { DownOutlined, UploadOutlined } from "@ant-design/icons";
+import { UploadOutlined } from "@ant-design/icons";
 import EditableTagGroup from "./Tag";
 import TextField from "@mui/material/TextField";
 import Select from "@mui/material/Select";
@@ -20,16 +13,12 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import FormLabel from "@mui/material/FormLabel";
 import Typography from '@mui/material/Typography';
-import Title from "antd/lib/skeleton/Title";
 import axios from 'axios'
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link,
-  useLocation, withRouter, Redirect
-
-} from "react-router-dom";
+import { withRouter } from "react-router-dom";
+import { GET_CHANNELS } from "../config/endpoints";
+import { GET_FILE_UPLOAD_URL } from "../config/endpoints";
+import { FORM_SUBMIT_URL } from "../config/endpoints";
+import CircularProgress from '@mui/material/CircularProgress';
 
 var retries = 3;
 
@@ -55,6 +44,7 @@ class Upload_Clip extends React.Component {
       uploading: false,
       isEmpty: 0,
       isFileListEmpty: 0,
+      showLoader: false,
       checked: [
         {
           lan: "English",
@@ -66,51 +56,9 @@ class Upload_Clip extends React.Component {
           isChecked: false,
           index: 1
         }
-        // {
-        //   lan: "Spanish",
-        //   isChecked: false,
-        //   index: 2
-        // },
-        // {
-        //   lan: "Tamil",
-        //   isChecked: false,
-        //   index: 3
-        // },
-        // {
-        //   lan: "Kannada",
-        //   isChecked: false,
-        //   index: 4
-        // },
-        // {
-        //   lan: "Telugu",
-        //   isChecked: false,
-        //   index: 5
-        // },
-        // {
-        //   lan: "Marathi",
-        //   isChecked: false,
-        //   index: 6
-        // },
-        // {
-        //   lan: "Bengali",
-        //   isChecked: false,
-        //   index: 7
-        // },
-        // {
-        //   lan: "Marathi",
-        //   isChecked: false,
-        //   index: 8
-        // },
-        // {
-        //   lan: "Malayalam",
-        //   isChecked: false,
-        //   index: 9
-        // }
       ]
     }
   }
-
-
 
   handleUpload = () => {
     return new Promise((resolve, reject) => {
@@ -164,7 +112,7 @@ class Upload_Clip extends React.Component {
         // "Content-Type": "application/json"
       }
     }
-    axios.get(`https://clipsdev.elyments.in/api/internal/Channels`, config)
+    axios.get(GET_CHANNELS, config)
       .then(res => {
         console.log("config", res.status);
         if (res.status == 401) {
@@ -185,6 +133,7 @@ class Upload_Clip extends React.Component {
           this.getChannels(retries);
         }
         else {
+          this.setState({ showLoader: false })
           swal({
             title: "Oops! An Error has occured!",
             text: "Please try again...",
@@ -192,8 +141,6 @@ class Upload_Clip extends React.Component {
             button: "Okay",
           });
         }
-
-        // this.getChannels();
       })
   }
 
@@ -221,15 +168,12 @@ class Upload_Clip extends React.Component {
       this.setState({ isFileListEmpty: 1 })
     }
     if (this.state.channelId == '' || this.state.description == '' || this.state.Language.length == 0 || this.state.fileList.length == 0) {
+      this.setState({ showLoader: false })
       this.setState({ isEmpty: 1 })
-      // alert("please fill out required fields.")
-      // this.postData()
-      // console.log("isEmpty");
     }
     else {
       this.postData()
     }
-    // if(this.state.description!='')
   }
 
   postData = async () => {
@@ -240,7 +184,8 @@ class Upload_Clip extends React.Component {
         // "Content-Type": "application/json"
       }
     }
-    let getUploadURLResponse = await axios.get(`https://chatdev.elyments.in/api/azure/upload/url?container=audio`, config1).catch(() => {
+    let getUploadURLResponse = await axios.get(GET_FILE_UPLOAD_URL, config1).catch(() => {
+      this.setState({ showLoader: false })
       swal({
         title: "Oops! An Error has occured!",
         text: "Please try again...",
@@ -252,6 +197,7 @@ class Upload_Clip extends React.Component {
     this.setState({ fileUploadURL: getUploadURLResponse.data.url });
     this.setState({ objectId: getUploadURLResponse.data.objectId });
     await this.handleUpload().catch(() => {
+      this.setState({ showLoader: false })
       swal({
         title: "Oops! An Error has occured!",
         text: "Please try again...",
@@ -259,10 +205,9 @@ class Upload_Clip extends React.Component {
         button: "Okay",
       });
     });
-    // 401?phonenumber:oops went wrong! 
     this.postFinalData();
-  }
 
+  }
 
   postFinalData = () => {
     var userData = {
@@ -273,23 +218,17 @@ class Upload_Clip extends React.Component {
       objectId: this.state.objectId,
       tags: this.state.tags
     }
-
-    // localStorage.setItem('token','sdfdsfsfd');
-    // localStorage.getItem('token')
-    // console.log(userData, "this is final data to upload");
     let config = {
       headers: {
         "Accept": "application/json",
         "Content-Type": "application/json",
       }
     }
-    axios.post(`https://clipsdev.elyments.in/api/internal/Clips`, userData, config)
+    axios.post(FORM_SUBMIT_URL, userData, config)
       .then(res => {
-        // console.log(res);
-        // console.log(res.data);
         swal({
-          title: "Good job!",
-          text: "Succesfully uploaded clip",
+          title: "Upload completed!",
+          text: "The clip is uploaded succesfully.",
           icon: "success",
           button: "Okay",
         });
@@ -310,20 +249,22 @@ class Upload_Clip extends React.Component {
           this.state.checked[i].isChecked = false;
           this.setState({ checked: this.state.checked })
         }
-        // EventRegister.emit('myCustomEvent', 'it works!!!')
         this.setState({ Language: [] })
         this.setState({ objectId: '' })
         this.setState({ tags: [] })
         this.setState({ fileList: [] })
         this.removeTags()
+        this.setState({ showLoader: false })
       })
       .catch((e) => {
+
         swal({
           title: "An Error has occured!",
           text: "Please try uploading again...",
           icon: "warning",
           button: "Okay",
         });
+        this.setState({ showLoader: false })
       })
 
   }
@@ -331,20 +272,15 @@ class Upload_Clip extends React.Component {
   removeTags = () => {
     this.state.tags = [];
     this.setState({ tags: this.state.tags })
-    // console.log("doing tags empty", this.state.tags)
   }
   getTags = (data) => {
     this.setState({ tags: data })
-    // console.log("data succes", data);
   }
   handleChange = (index, value) => {
     this.state.checked[index].isChecked = !this.state.checked[index].isChecked
-
-
     this.setState({
       checked: this.state.checked
     })
-    // console.log("ischecked", this.state.checked);
     this.state.Language = []
     this.setState({ Language: this.state.Language })
     this.state.checked.map(l => {
@@ -353,7 +289,6 @@ class Upload_Clip extends React.Component {
         this.setState({ Language: this.state.Language })
       }
     })
-    // this.state.languages.concat(event)
   };
 
 
@@ -395,36 +330,26 @@ class Upload_Clip extends React.Component {
           required={true}
           value={this.state.description}
           onChange={(value) => {
-            // console.log("discription", value.target.value);
-            // this.state.description = value
             this.setState({ description: value.target.value })
-
           }
-            // console.log("description",)
           }
         />
         <p style={{ fontSize: 12, color: "red" }}> {this.state.isDescriptionEmpty === 1 ? "Please fill out this field." : ""}</p>
         <FormControl fullWidth style={{ marginTop: 15 }} required
-        // helperText={this.state.isChannelIdEmpty === 1 ? "Please fill out this field." : ""}
         >
           <InputLabel id="demo-simple-select-label">Channel Name</InputLabel>
           <Select
-            // required
-            // filled={true}
             labelId="demo-simple-select-label"
             id="demo-simple-select"
-            // value={age}
             label="Channel Name"
             value={this.state.channelId}
 
             onChange={(l) => {
-              // console.log("changed value", l.target.value);
               this.setState({ channelId: l.target.value })
             }}
           >
             {
               this.state.data.map((l, i) => {
-                // console.log(l);
                 return (
                   <MenuItem value={l.id} key={i} >{l.name} </MenuItem>
                 )
@@ -464,7 +389,7 @@ class Upload_Clip extends React.Component {
           <EditableTagGroup callBack={this.getTags} tags={this.state.tags} />
         </div>
         <div style={{ alignItems: "center", textAlign: "center" }}>
-          <Button onClick={this.formValidations} variant="contained" style={{ marginTop: 35, textAlign: "center", backgroundColor: "#8B139E", color: "white", borderRadius: 5 }}>Upload Clip</Button>
+          <Button onClick={this.formValidations} variant="contained" style={{ marginTop: 35, textAlign: "center", backgroundColor: "#8B139E", color: "white", borderRadius: 5 }} disabled={this.state.showLoader} >{this.state.showLoader == true ? <CircularProgress size="1.5rem" style={{ color: "white", padding: 5 }} /> : "Upload Clip"} </Button>
         </div>
       </div>
     );

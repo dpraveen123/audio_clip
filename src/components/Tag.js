@@ -17,22 +17,14 @@ class EditableTagGroup extends React.Component {
     editInputValue: '',
   };
 
-  componentDidMount = () => {
-    // this.setState({tags:this.props.tags})
-    console.log("these are props from tags.js",this.props);
-    // this.listener = EventRegister.addEventListener('myCustomEvent', (tags) => {
-    //   this.setState({
-    //     tags: []
-    //   })
-    // })
-  }
- emptyTags=()=>{
-    this.setState({tags:[]})
+
+  emptyTags = () => {
+    this.setState({ tags: [] })
   }
 
   handleClose = removedTag => {
     const tags = this.state.tags.filter(tag => tag !== removedTag);
-    console.log(tags,"but why tags not emtying");
+    console.log(tags, "but why tags not emtying");
     this.setState({ tags });
   };
 
@@ -47,7 +39,7 @@ class EditableTagGroup extends React.Component {
   handleInputConfirm = () => {
     const { inputValue } = this.state;
     let { tags } = this.props;
-    console.log("hloo",tags,inputValue,"tags are not emptying here"); 
+    console.log("hloo", tags, inputValue, "tags are not emptying here");
 
     if (inputValue && tags.indexOf(inputValue) === -1) {
       tags = [...tags, inputValue];
@@ -67,11 +59,11 @@ class EditableTagGroup extends React.Component {
   handleEditInputConfirm = () => {
     // console.log("hello")
     this.setState(({ tags, editInputIndex, editInputValue }) => {
-     this.props.tags = [...tags];
-     this.props.tags[editInputIndex] = editInputValue;
+      this.props.tags = [...tags];
+      this.props.tags[editInputIndex] = editInputValue;
 
       return {
-        tags:  this.props.tags,
+        tags: this.props.tags,
         editInputIndex: -1,
         editInputValue: '',
       };
