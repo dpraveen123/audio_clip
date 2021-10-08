@@ -41,7 +41,7 @@ export default class Login extends Component {
       .then(res => {
         console.log("res is", res);
         console.log(res.data);
-        useHistory().push('/otppage');
+        // useHistory().push('/otppage');
       })
       .catch(e => {
         console.log("error is", e)
@@ -62,11 +62,13 @@ export default class Login extends Component {
         <TextField
           id="outlined-basic"
           label="Phone Number"
+          placeholder="Enter your phone number with country code"
           variant="outlined"
           className="title"
+          type="text"
+          inputMode="numeric"
           required={true}
           onChange={(value) => {
-            console.log(value.target.value);
             this.state.mobileNumber = value.target.value
             this.setState({ mobileNumber: this.state.mobileNumber })
             if (this.state.mobileNumber.length == 13) {
