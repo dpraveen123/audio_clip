@@ -106,7 +106,7 @@ class OtpPage extends Component {
                         accessToken: this.state.accessToken
                     }} */}
 
-                    ><Button
+                    <Button
                         onClick={this.submitOtp}
                         variant="contained"
                         style={{
