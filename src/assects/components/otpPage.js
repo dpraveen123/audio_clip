@@ -43,13 +43,18 @@ class OtpPage extends Component {
         // console.log(location,"location")
         // const { mobilenumber } = this.props.location.state
         // console.log("props in otppage", mobilenumber);
-        this.setState({ mobileNumber: this.props.location.mobileNumber.substring(3, 13) })
-        this.setState({ countryCode: this.props.location.mobileNumber.substring(0, 3) })
-        console.log(this.state.mobileNumber, this.state.countryCode, "is props in otppage");
+        if (this.props.location.MobileNumber !== '') {
+            this.setState({ mobileNumber: this.props.location.mobileNumber.substring(3, 13) })
+            this.setState({ countryCode: this.props.location.mobileNumber.substring(0, 3) })
+            console.log(this.state.mobileNumber, this.state.countryCode, "is props in otppage");
+        }
+
 
 
     }
     submitOtp = () => {
+
+
         let userData = {
             CountryCode: this.state.countryCode,
             Otp: this.state.otp,
@@ -63,8 +68,8 @@ class OtpPage extends Component {
                 console.log("accesToken", res.data.accessToken);
                 this.state.accessToken = res.data.accessToken
                 this.setState({ accessToken: this.state.accessToken })
-                alert("sucsess otp verified",this.state.accessToken)
-                this.props.history.push({pathname:'/home',accessToken:this.state.accessToken})
+                alert("sucsess otp verified", this.state.accessToken)
+                this.props.history.push({ pathname: '/home', accessToken: this.state.accessToken })
             })
             .then(
                 this.setState({ otpVerified: 1 })
@@ -108,7 +113,7 @@ class OtpPage extends Component {
                         accessToken: this.state.accessToken
                     }} */}
 
-                    ><Button
+                    <Button
                         onClick={this.submitOtp}
                         variant="contained"
                         style={{
@@ -119,9 +124,9 @@ class OtpPage extends Component {
                             borderRadius: 5,
                         }}
                     >
-                            Submit OTP
-                        </Button>
-                        {/* </Link> */}
+                        Submit OTP
+                    </Button>
+                    {/* </Link> */}
                 </div>
             </div>
         );

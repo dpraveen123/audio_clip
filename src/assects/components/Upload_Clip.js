@@ -2,8 +2,10 @@ import React from "react";
 import {
   Upload,
   Button,
+  message
 
 } from "antd";
+// import reqwest from 'reqwest';
 // import { EventRegister } from 'react-events-listeners'
 import swal from 'sweetalert';
 import { DownOutlined, UploadOutlined } from "@ant-design/icons";
@@ -42,35 +44,14 @@ var props = {
       // console.log("files", fileList,);
     }
   },
-  defaultFileList: [
-    // {
-    //   uid: '1',
-    //   name: 'xxx.png',
-    //   status: 'done',
-    //   response: 'Server Error 500', // custom error message to show
-    //   url: 'http://www.baidu.com/xxx.png',
-    // },
-    // {
-    //   uid: '2',
-    //   name: 'yyy.png',
-    //   status: 'done',
-    //   url: 'http://www.baidu.com/yyy.png',
-    // },
-    // {
-    //   uid: '3',
-    //   name: 'zzz.png',
-    //   status: 'error',
-    //   response: 'Server Error 500', // custom error message to show
-    //   url: 'http://www.baidu.com/zzz.png',
-    // },
-  ],
+
 };
 // var props = {
 //   action: "https://elymentsstoragedev.blob.core.windows.net/audio-cast/e14620572f544e84a3587532864d74b3?st=2021-08-06T01%3A37%3A02Z&se=2021-08-06T04%3A57%3A02Z&sp=w&sv=2018-03-28&sr=b&sig=eeRRQEW2uJsGrHxwjI6xF0UB4%2BT1d%2F3gJFiX%2B0sJ5X0%3D",
 //   onChange({ file, fileList }) {
 //     if (file.status !== "uploading") {
 
-      // console.log(file);
+// console.log(file);
 //     }
 //   }
 // };
@@ -80,17 +61,21 @@ class Upload_Clip extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      fileUploadURL: "",
       isDescriptionEmpty: 0,
       isChannelIdEmpty: 0,
       isLanguageEmpty: 0,
+      accessToken: '',
       data: [],
       Language: [],
       channelId: '',
       description: '',
       duration: 10,
       languages: [],
-      objectId: 'sample',
+      objectId: "",
       tags: [],
+      fileList: [],
+      uploading: false,
       isEmpty: 0,
       checked: [
         {
@@ -147,8 +132,39 @@ class Upload_Clip extends React.Component {
     }
   }
 
+
+
+  handleUpload = () => {
+    return new Promise((resolve, reject) => {
+
+      const { fileList } = this.state;
+      let requestConfig = {
+        headers: {
+          "x-ms-blob-type": "BlockBlob"
+        }
+      }
+
+      this.setState({
+        uploading: true,
+      });
+
+      console.log(fileList);
+      let formData = new FormData();
+      formData.append("file", fileList[0]);
+
+      // You can use any AJAX library you like
+      axios.put(this.state.fileUploadURL, formData, requestConfig).then((res) => {
+        console.log(res);
+        resolve(res.data);
+      }).catch((err) => {
+        console.error(err);
+        reject(err);
+      });
+    });
+  };
   componentDidMount() {
-    console.log("accsess token from otppage is",this.props.location.accessToken)
+    console.log("accsess token from otppage is", this.props.location.accessToken)
+    this.setState({ accessToken: this.props.location.accessToken })
     // console.log("props in main page", this.props.location.accessToken);
     let config = {
       headers: {
@@ -199,24 +215,30 @@ class Upload_Clip extends React.Component {
     // if(this.state.description!='')
   }
 
-  postData = () => {
+  postData = async () => {
 
-    // axios.get(`https://chatdev.elyments.in/api/azure/upload/url/1?container=audio`)
-    //   .then(res => {
-        // console.log("audio", res.data);
-    //     this.setState({ objectId: res.data.objectId })
-    //     // this.setState({ data: persons });
-        // console.log(this.state.data);
-    //   })
+    let config1 = {
+      headers: {
+        "Authorization": this.state.accessToken,
+        // "Content-Type": "application/json"
+      }
+    }
+    let getUploadURLResponse = await axios.get(`https://chatdev.elyments.in/api/azure/upload/url?container=audio`, config1).catch(console.error);
+    console.log(getUploadURLResponse.data);
+    this.setState({ fileUploadURL: getUploadURLResponse.data.url });
+    this.setState({ objectId: getUploadURLResponse.data.objectId });
+    await this.handleUpload();
+    this.postFinalData();
+  }
 
-    // this.formValidations()
-    // console.log("selected languages are", this.state.Language)
+
+  postFinalData = () => {
     var userData = {
       channelId: this.state.channelId,
       description: this.state.description,
       duration: this.state.duration,
       languages: this.state.Language,
-      objectId: "e14620572f544e84a3587532864d74b3",
+      objectId: this.state.objectId,
       tags: this.state.tags
     }
     // console.log(userData, "this is final data to upload");
@@ -247,8 +269,8 @@ class Upload_Clip extends React.Component {
         // EventRegister.emit('myCustomEvent', 'it works!!!')
         this.setState({ Language: [] })
         this.setState({ objectId: '' })
-
         this.setState({ tags: [] })
+        this.setState({ fileList: [] })
         this.removeTags()
       })
       .catch((e) => {
@@ -259,6 +281,7 @@ class Upload_Clip extends React.Component {
           button: "Okay",
         });
       })
+
   }
 
   removeTags = () => {
@@ -291,6 +314,27 @@ class Upload_Clip extends React.Component {
 
 
   render() {
+    const { uploading, fileList } = this.state;
+    const props = {
+      onRemove: file => {
+        this.setState(state => {
+          const index = state.fileList.indexOf(file);
+          const newFileList = state.fileList.slice();
+          newFileList.splice(index, 1);
+          return {
+            fileList: newFileList,
+          };
+        });
+      },
+      beforeUpload: file => {
+        this.setState(state => ({
+          fileList: [...state.fileList, file],
+        }));
+        return false;
+      },
+      fileList,
+    };
+
     return (
       <div className='clipBox'>
         <Typography sx={{ fontSize: 20, marginBottom: 3, color: "#8B139E" }} color="text.secondary" gutterBottom className="Heading">
@@ -314,7 +358,7 @@ class Upload_Clip extends React.Component {
         />
         <p style={{ fontSize: 12, color: "red" }}> {this.state.isDescriptionEmpty === 1 ? "Please fill out this field." : ""}</p>
         <FormControl fullWidth style={{ marginTop: 15 }} required
-          helperText={this.state.isChannelIdEmpty === 1 ? "Please fill out this field." : ""}
+        // helperText={this.state.isChannelIdEmpty === 1 ? "Please fill out this field." : ""}
         >
           <InputLabel id="demo-simple-select-label">Channel Name</InputLabel>
           <Select
@@ -361,9 +405,15 @@ class Upload_Clip extends React.Component {
         <p style={{ fontSize: 12, color: "red" }}> {this.state.isLanguageEmpty === 1 ? "Please select anyone out this fields." : ""}</p>
 
         <div style={{ marginTop: 15 }}>
-          <Upload {...props} accept={".mp3"} >
-            <Button icon={<UploadOutlined style={{ color: "#8B139E", fontWeight: "bold" }} />} style={{ fontWeight: 500 }}> Upload</Button>
+          <Upload {...props} accept={[".mp3", ".aac"]}>
+            <Button icon={<UploadOutlined style={{ color: "#8B139E", fontWeight: "bold" }} />} style={{ fontWeight: 500 }}>Select File</Button>
           </Upload>
+
+
+
+          {/* <Upload {...props} accept={".mp3"} >
+            <Button icon={<UploadOutlined style={{ color: "#8B139E", fontWeight: "bold" }} />} style={{ fontWeight: 500 }}> Upload</Button>
+          </Upload> */}
         </div>
         <div style={{ marginTop: 15 }}>
           <FormLabel > Tags</FormLabel>
