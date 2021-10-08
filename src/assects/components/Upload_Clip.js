@@ -53,6 +53,7 @@ class Upload_Clip extends React.Component {
       fileList: [],
       uploading: false,
       isEmpty: 0,
+      isFileListEmpty:0,
       checked: [
         {
           lan: "English",
@@ -140,6 +141,10 @@ class Upload_Clip extends React.Component {
   };
   componentDidMount = async () => {
     console.log("accsess token from otppage is", this.props.location.accessToken)
+    if(this.props.location.accessToken==undefined){
+      this.props.history.replace('/')
+
+    }
     this.setState({ accessToken: this.props.location.accessToken })
     // console.log("props in main page", this.props.location.accessToken);
     this.getChannels();
@@ -155,7 +160,7 @@ class Upload_Clip extends React.Component {
     axios.get(`https://clipsdev.elyments.in/api/internal/Channels`, config)
       .then(res => {
         console.log("config", res.status);
-        if (res.status == 200) {
+        if (res.status == 401) {
           swal({
             title: "Oops! An Error has occured!",
             text: "Please try again...",
@@ -163,6 +168,8 @@ class Upload_Clip extends React.Component {
             button: "Okay",
           });
           // this.props.history.go(-2);
+
+          this.props.history.replace('/')
           // return (
           //   <Redirect from="/home" to="/" ></Redirect>
 
@@ -202,8 +209,10 @@ class Upload_Clip extends React.Component {
     else {
       this.setState({ isLanguageEmpty: 0 })
     }
-
-    if (this.state.channelId == '' || this.state.description == '' || this.state.Language.length == 0) {
+    if(this.state.fileList.length==0){
+      this.setState({isFileListEmpty:1})
+    }
+    if (this.state.channelId == '' || this.state.description == '' || this.state.Language.length == 0|| this.state.fileList.length== 0)  {
       this.setState({ isEmpty: 1 })
       // alert("please fill out required fields.")
       // this.postData()
@@ -273,6 +282,15 @@ class Upload_Clip extends React.Component {
           icon: "success",
           button: "Okay",
         });
+        if (res.status == 401) {
+          swal({
+            title: "Oops! An Error has occured!",
+            text: "Please try again...",
+            icon: "warning",
+            button: "Okay",
+          });
+          this.props.history.replace('/')
+        }
         this.state.channelId = ""
         this.setState({ channelId: this.state.channelId })
         this.setState({ description: '' })
@@ -344,8 +362,11 @@ class Upload_Clip extends React.Component {
       beforeUpload: file => {
         this.setState(state => ({
           fileList: [...state.fileList, file],
+
+          isFileListEmpty:0
         }));
         return false;
+        
       },
       fileList,
     };
@@ -422,6 +443,8 @@ class Upload_Clip extends React.Component {
           <Upload {...props} accept={[".mp3", ".aac"]}>
             <Button icon={<UploadOutlined style={{ color: "#8B139E", fontWeight: "bold" }} />} style={{ fontWeight: 500 }}>Select File</Button>
           </Upload>
+
+          <p style={{ fontSize: 12, color: "red" }}> {this.state.isFileListEmpty === 1 ? "Please select .mp3 file  " : ""}</p>
         </div>
         <div style={{ marginTop: 15 }}>
           <FormLabel > Tags</FormLabel>
