@@ -66,12 +66,9 @@ export default class Login extends Component {
           variant="outlined"
           className="title"
           type="text"
-
-          // type="text"
           inputMode="numeric"
           required={true}
           onChange={(value) => {
-            console.log(value.target.value);
             this.state.mobileNumber = value.target.value
             this.setState({ mobileNumber: this.state.mobileNumber })
             if (this.state.mobileNumber.length == 13) {

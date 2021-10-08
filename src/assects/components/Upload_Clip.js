@@ -27,34 +27,10 @@ import {
   Switch,
   Route,
   Link,
-  useLocation, withRouter
+  useLocation, withRouter, Redirect
 
 } from "react-router-dom";
 
-
-
-
-var props = {
-  // action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
-  // status: 'done',
-  onChange({ file, fileList }) {
-    if (file.status !== 'uploading') {
-      console.log("file status", file.status);
-      // file.status = 'done'
-      // console.log("files", fileList,);
-    }
-  },
-
-};
-// var props = {
-//   action: "https://elymentsstoragedev.blob.core.windows.net/audio-cast/e14620572f544e84a3587532864d74b3?st=2021-08-06T01%3A37%3A02Z&se=2021-08-06T04%3A57%3A02Z&sp=w&sv=2018-03-28&sr=b&sig=eeRRQEW2uJsGrHxwjI6xF0UB4%2BT1d%2F3gJFiX%2B0sJ5X0%3D",
-//   onChange({ file, fileList }) {
-//     if (file.status !== "uploading") {
-
-// console.log(file);
-//     }
-//   }
-// };
 
 
 class Upload_Clip extends React.Component {
@@ -162,10 +138,14 @@ class Upload_Clip extends React.Component {
       });
     });
   };
-  componentDidMount() {
+  componentDidMount = async () => {
     console.log("accsess token from otppage is", this.props.location.accessToken)
     this.setState({ accessToken: this.props.location.accessToken })
     // console.log("props in main page", this.props.location.accessToken);
+    this.getChannels();
+  }
+
+  getChannels = () => {
     let config = {
       headers: {
         "Accept": "application/json",
@@ -174,12 +154,32 @@ class Upload_Clip extends React.Component {
     }
     axios.get(`https://clipsdev.elyments.in/api/internal/Channels`, config)
       .then(res => {
-        // console.log("config", res.data, config);
+        console.log("config", res.status);
+        if (res.status == 200) {
+          swal({
+            title: "Oops! An Error has occured!",
+            text: "Please try again...",
+            icon: "warning",
+            button: "Okay",
+          });
+          // this.props.history.go(-2);
+          // return (
+          //   <Redirect from="/home" to="/" ></Redirect>
+
+          // )
+        }
         this.setState({ data: res.data });
-        // console.log(this.state.data);
 
       })
-
+      .catch(() => {
+        swal({
+          title: "Oops! An Error has occured!",
+          text: "Please try again...",
+          icon: "warning",
+          button: "Okay",
+        });
+        // this.getChannels();
+      })
   }
 
   formValidations = () => {
@@ -223,11 +223,26 @@ class Upload_Clip extends React.Component {
         // "Content-Type": "application/json"
       }
     }
-    let getUploadURLResponse = await axios.get(`https://chatdev.elyments.in/api/azure/upload/url?container=audio`, config1).catch(console.error);
+    let getUploadURLResponse = await axios.get(`https://chatdev.elyments.in/api/azure/upload/url?container=audio`, config1).catch(() => {
+      swal({
+        title: "Oops! An Error has occured!",
+        text: "Please try again...",
+        icon: "warning",
+        button: "Okay",
+      });
+    });
     console.log(getUploadURLResponse.data);
     this.setState({ fileUploadURL: getUploadURLResponse.data.url });
     this.setState({ objectId: getUploadURLResponse.data.objectId });
-    await this.handleUpload();
+    await this.handleUpload().catch(() => {
+      swal({
+        title: "Oops! An Error has occured!",
+        text: "Please try again...",
+        icon: "warning",
+        button: "Okay",
+      });
+    });
+    // 401?phonenumber:oops went wrong! 
     this.postFinalData();
   }
 
@@ -376,10 +391,10 @@ class Upload_Clip extends React.Component {
             }}
           >
             {
-              this.state.data.map((l) => {
+              this.state.data.map((l, i) => {
                 // console.log(l);
                 return (
-                  <MenuItem value={l.id} >{l.name} </MenuItem>
+                  <MenuItem value={l.id} key={i} >{l.name} </MenuItem>
                 )
               })
             }
@@ -390,10 +405,9 @@ class Upload_Clip extends React.Component {
           <FormLabel component="legend"> Language</FormLabel>
           {
             this.state.checked.map((l, index) => {
-
               return (
                 <FormControlLabel
-
+                  key={index}
                   control={<Checkbox checked={l.isChecked} onChange={() => this.handleChange(index, l.lan)} />}
                   label={l.lan}
                 />
@@ -408,12 +422,6 @@ class Upload_Clip extends React.Component {
           <Upload {...props} accept={[".mp3", ".aac"]}>
             <Button icon={<UploadOutlined style={{ color: "#8B139E", fontWeight: "bold" }} />} style={{ fontWeight: 500 }}>Select File</Button>
           </Upload>
-
-
-
-          {/* <Upload {...props} accept={".mp3"} >
-            <Button icon={<UploadOutlined style={{ color: "#8B139E", fontWeight: "bold" }} />} style={{ fontWeight: 500 }}> Upload</Button>
-          </Upload> */}
         </div>
         <div style={{ marginTop: 15 }}>
           <FormLabel > Tags</FormLabel>

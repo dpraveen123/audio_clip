@@ -33,7 +33,7 @@ class OtpPage extends Component {
             otp: '',
             mobileNumber: '',
             countryCode: '',
-            otpVerified: 0,
+            otpVerified: 1,
             accessToken: ''
         }
     }
@@ -43,7 +43,7 @@ class OtpPage extends Component {
         // console.log(location,"location")
         // const { mobilenumber } = this.props.location.state
         // console.log("props in otppage", mobilenumber);
-        if (this.props.location.MobileNumber !== '') {
+        if (this.props.location.mobileNumber !== undefined) {
             this.setState({ mobileNumber: this.props.location.mobileNumber.substring(3, 13) })
             this.setState({ countryCode: this.props.location.mobileNumber.substring(0, 3) })
             console.log(this.state.mobileNumber, this.state.countryCode, "is props in otppage");
@@ -63,17 +63,19 @@ class OtpPage extends Component {
         }
         axios.post('https://identitydev.elyments.in/api/Identity/VerifyOtp/V2', userData)
             .then(res => {
+                this.setState({ otpVerified: 1 })
                 console.log(res);
                 console.log(res.data);
                 console.log("accesToken", res.data.accessToken);
                 this.state.accessToken = res.data.accessToken
                 this.setState({ accessToken: this.state.accessToken })
-                alert("sucsess otp verified", this.state.accessToken)
+                // alert("sucsess otp verified", this.state.accessToken)
                 this.props.history.push({ pathname: '/home', accessToken: this.state.accessToken })
             })
-            .then(
-                this.setState({ otpVerified: 1 })
-            )
+            .catch((e) => {
+                this.setState({ otpVerified: 0 })
+
+            })
     }
     render() {
         return (
@@ -106,6 +108,7 @@ class OtpPage extends Component {
                         this.setState({ otp: value.target.value })
                     }}
                 />
+                <p style={{ fontSize: 12, color: "red", }}> {this.state.otpVerified === 0 ? "Invalid OTP" : ""}</p>
                 {/* <p style={{ fontSize: 12, color: "red" }}> {this.state.otpVerified === 1 ? "Please fill out this field." : ""}</p> */}
                 <div style={{ alignItems: "center", textAlign: "center" }}>
                     {/* <Link to={{
