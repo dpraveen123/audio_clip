@@ -31,6 +31,7 @@ import {
 
 } from "react-router-dom";
 
+var retries = 3;
 
 
 class Upload_Clip extends React.Component {
@@ -53,7 +54,7 @@ class Upload_Clip extends React.Component {
       fileList: [],
       uploading: false,
       isEmpty: 0,
-      isFileListEmpty:0,
+      isFileListEmpty: 0,
       checked: [
         {
           lan: "English",
@@ -141,16 +142,22 @@ class Upload_Clip extends React.Component {
   };
   componentDidMount = async () => {
     console.log("accsess token from otppage is", this.props.location.accessToken)
-    if(this.props.location.accessToken==undefined){
-      this.props.history.replace('/')
+    if (this.props.location.accessToken == undefined) {
+      let token = localStorage.getItem('accessToken');
+      if (token) {
+        this.setState({ accessToken: token });
+      }
+      else {
+        this.props.history.replace('/')
+      }
 
     }
-    this.setState({ accessToken: this.props.location.accessToken })
-    // console.log("props in main page", this.props.location.accessToken);
-    this.getChannels();
+    else {
+      this.setState({ accessToken: this.props.location.accessToken });
+    }
+    this.getChannels(retries);
   }
-
-  getChannels = () => {
+  getChannels = (retries) => {
     let config = {
       headers: {
         "Accept": "application/json",
@@ -167,24 +174,25 @@ class Upload_Clip extends React.Component {
             icon: "warning",
             button: "Okay",
           });
-          // this.props.history.go(-2);
-
           this.props.history.replace('/')
-          // return (
-          //   <Redirect from="/home" to="/" ></Redirect>
-
-          // )
         }
         this.setState({ data: res.data });
 
       })
       .catch(() => {
-        swal({
-          title: "Oops! An Error has occured!",
-          text: "Please try again...",
-          icon: "warning",
-          button: "Okay",
-        });
+        if (retries != 0) {
+          retries = retries - 1;
+          this.getChannels(retries);
+        }
+        else {
+          swal({
+            title: "Oops! An Error has occured!",
+            text: "Please try again...",
+            icon: "warning",
+            button: "Okay",
+          });
+        }
+
         // this.getChannels();
       })
   }
@@ -209,10 +217,10 @@ class Upload_Clip extends React.Component {
     else {
       this.setState({ isLanguageEmpty: 0 })
     }
-    if(this.state.fileList.length==0){
-      this.setState({isFileListEmpty:1})
+    if (this.state.fileList.length == 0) {
+      this.setState({ isFileListEmpty: 1 })
     }
-    if (this.state.channelId == '' || this.state.description == '' || this.state.Language.length == 0|| this.state.fileList.length== 0)  {
+    if (this.state.channelId == '' || this.state.description == '' || this.state.Language.length == 0 || this.state.fileList.length == 0) {
       this.setState({ isEmpty: 1 })
       // alert("please fill out required fields.")
       // this.postData()
@@ -265,6 +273,9 @@ class Upload_Clip extends React.Component {
       objectId: this.state.objectId,
       tags: this.state.tags
     }
+
+    // localStorage.setItem('token','sdfdsfsfd');
+    // localStorage.getItem('token')
     // console.log(userData, "this is final data to upload");
     let config = {
       headers: {
@@ -272,7 +283,7 @@ class Upload_Clip extends React.Component {
         "Content-Type": "application/json",
       }
     }
-    axios.post(`https://virtserver.swaggerhub.com/fragmadata/Clips-WebUpload/1.0.0/api/internal/Clips`, userData, config)
+    axios.post(`https://clipsdev.elyments.in/api/internal/Clips`, userData, config)
       .then(res => {
         // console.log(res);
         // console.log(res.data);
@@ -361,12 +372,12 @@ class Upload_Clip extends React.Component {
       },
       beforeUpload: file => {
         this.setState(state => ({
-          fileList: [...state.fileList, file],
+          fileList: [file],
 
-          isFileListEmpty:0
+          isFileListEmpty: 0
         }));
         return false;
-        
+
       },
       fileList,
     };
@@ -440,11 +451,11 @@ class Upload_Clip extends React.Component {
         <p style={{ fontSize: 12, color: "red" }}> {this.state.isLanguageEmpty === 1 ? "Please select anyone out this fields." : ""}</p>
 
         <div style={{ marginTop: 15 }}>
-          <Upload {...props} accept={[".mp3", ".aac"]}>
+          <Upload {...props} accept={[".mp3", ".aac"]} maxCount={1}>
             <Button icon={<UploadOutlined style={{ color: "#8B139E", fontWeight: "bold" }} />} style={{ fontWeight: 500 }}>Select File</Button>
           </Upload>
 
-          <p style={{ fontSize: 12, color: "red" }}> {this.state.isFileListEmpty === 1 ? "Please select .mp3 file  " : ""}</p>
+          <p style={{ fontSize: 12, color: "red" }}> {this.state.isFileListEmpty === 1 ? "Please select a file to upload" : ""}</p>
         </div>
         <div style={{ marginTop: 15 }}>
           <FormLabel > Tags</FormLabel>

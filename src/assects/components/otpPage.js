@@ -69,9 +69,8 @@ class OtpPage extends Component {
                 console.log("accesToken", res.data.accessToken);
                 this.state.accessToken = res.data.accessToken
                 this.setState({ accessToken: this.state.accessToken })
-                // alert("sucsess otp verified", this.state.accessToken)
-                // this.props.history.push({ pathname: '/home', accessToken: this.state.accessToken })
- 
+                localStorage.setItem('accessToken', this.state.accessToken)
+
                 this.props.history.replace({ pathname: '/home', accessToken: this.state.accessToken })
             })
             .catch((e) => {
