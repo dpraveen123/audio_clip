@@ -29,7 +29,7 @@ class EditableTagGroup extends React.Component {
 
   handleClose = removedTag => {
     const tags = this.state.tags.filter(tag => tag !== removedTag);
-    // console.log(tags, "but why tags not emtying");
+    this.props.callBack(tags);
     this.setState({ tags });
   };
 
