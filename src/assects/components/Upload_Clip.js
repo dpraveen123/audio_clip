@@ -364,27 +364,7 @@ getFilePath=(options)=>{
       beforeUpload: file => {
 
         console.log("you sected file is",file)
-        var reader = new FileReader();
-        var audio = document.createElement('audio');
-        if ( file) {
-            var reader = new FileReader();
-    
-            reader.onload = function (e) {
-                audio.src = e.target.result;
-                audio.addEventListener('loadedmetadata', function(){
-                    // Obtain the duration in seconds of the audio file (with milliseconds as well, a float value)
-                    var duration = audio.duration;
-                
-                    // example 12.3234 seconds
-                    console.log("The duration of the song is of: " + duration + " seconds");
-                    // Alternatively, just display the integer value with
-                    // parseInt(duration)
-                    // 12 seconds
-                },false);
-            };
-    
-            reader.readAsDataURL(file);
-        }
+       
         // var url;
         // // var file = document.querySelector("#file").files[0];
         // var reader = new FileReader();
