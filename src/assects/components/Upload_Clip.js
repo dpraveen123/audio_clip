@@ -255,7 +255,9 @@ class Upload_Clip extends React.Component {
     this.postFinalData();
   }
 
-
+getFilePath=(options)=>{
+  console.log("hllo i am custome request",options)
+}
   postFinalData = () => {
     var userData = {
       channelId: this.state.channelId,
@@ -360,14 +362,66 @@ class Upload_Clip extends React.Component {
         });
       },
       beforeUpload: file => {
+
+        console.log("you sected file is",file)
+        var reader = new FileReader();
+        var audio = document.createElement('audio');
+        if ( file) {
+            var reader = new FileReader();
+    
+            reader.onload = function (e) {
+                audio.src = e.target.result;
+                audio.addEventListener('loadedmetadata', function(){
+                    // Obtain the duration in seconds of the audio file (with milliseconds as well, a float value)
+                    var duration = audio.duration;
+                
+                    // example 12.3234 seconds
+                    console.log("The duration of the song is of: " + duration + " seconds");
+                    // Alternatively, just display the integer value with
+                    // parseInt(duration)
+                    // 12 seconds
+                },false);
+            };
+    
+            reader.readAsDataURL(file);
+        }
+        // var url;
+        // // var file = document.querySelector("#file").files[0];
+        // var reader = new FileReader();
+        // reader.onload = function(evt) {
+        //   url = evt.target.result;
+        //   console.log(url);
+        //   var sound = document.createElement("audio");
+        //   var link = document.createElement("source");
+        //   sound.id = "audio-player";
+        //   sound.controls = "controls";
+        //   link.src = url;
+        //   sound.type = "audio/mpeg";
+        //   sound.appendChild(link);
+        //   document.getElementById("song").appendChild(sound);
+        //   console.log("sound is ", document.querySelector('#song #audio-player'))
+        // };
+        // reader.readAsDataURL(file);
+        // const reader = new FileReader();
+        // reader.onload = e => {
+        //     console.log(e.target.result,"this is result bro");
+        // };
+        // reader.readAsText(file);
+
+        // var audio=new Audio(file);
+        // audio.play()
+        // console.log("audii is",audio,"and duration is",audio.duration)
         this.setState(state => ({
           fileList: [...state.fileList, file],
 
           isFileListEmpty:0
         }));
+      // console.log("you sected file is hehehe",file)
+
         return false;
         
       },
+      
       fileList,
     };
 
@@ -440,7 +494,10 @@ class Upload_Clip extends React.Component {
         <p style={{ fontSize: 12, color: "red" }}> {this.state.isLanguageEmpty === 1 ? "Please select anyone out this fields." : ""}</p>
 
         <div style={{ marginTop: 15 }}>
-          <Upload {...props} accept={[".mp3", ".aac"]}>
+          <Upload {...props} accept={[".mp3", ".aac"]}
+          // onChange={()=>{alert("file uploading")}}
+          // customRequest={(op)=>{alert("custom bro")}}
+          >
             <Button icon={<UploadOutlined style={{ color: "#8B139E", fontWeight: "bold" }} />} style={{ fontWeight: 500 }}>Select File</Button>
           </Upload>
 
@@ -455,6 +512,7 @@ class Upload_Clip extends React.Component {
         <div style={{ alignItems: "center", textAlign: "center" }}>
           <Button onClick={this.formValidations} variant="contained" style={{ marginTop: 35, textAlign: "center", backgroundColor: "#8B139E", color: "white", borderRadius: 5 }}>Upload Clip</Button>
         </div>
+        <div id="song"></div>
       </div>
     );
   }
