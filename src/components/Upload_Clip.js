@@ -36,7 +36,7 @@ class Upload_Clip extends React.Component {
       Language: [],
       channelId: '',
       description: '',
-      duration: 10,
+      duration: -1,
       languages: [],
       objectId: "",
       tags: [],
@@ -74,13 +74,13 @@ class Upload_Clip extends React.Component {
         uploading: true,
       });
 
-      console.log(fileList);
+      // console.log(fileList);
       let formData = new FormData();
       formData.append("file", fileList[0]);
 
       // You can use any AJAX library you like
       axios.put(this.state.fileUploadURL, formData, requestConfig).then((res) => {
-        console.log(res);
+        // console.log(res);
         resolve(res.data);
       }).catch((err) => {
         console.error(err);
@@ -89,7 +89,7 @@ class Upload_Clip extends React.Component {
     });
   };
   componentDidMount = async () => {
-    console.log("accsess token from otppage is", this.props.location.accessToken)
+    // console.log("accsess token from otppage is", this.props.location.accessToken)
     if (this.props.location.accessToken == undefined) {
       let token = localStorage.getItem('accessToken');
       if (token) {
@@ -114,32 +114,33 @@ class Upload_Clip extends React.Component {
     }
     axios.get(GET_CHANNELS, config)
       .then(res => {
-        console.log("config", res.status);
-        if (res.status == 401) {
-          swal({
-            title: "Oops! An Error has occured!",
-            text: "Please try again...",
-            icon: "warning",
-            button: "Okay",
-          });
-          this.props.history.replace('/')
-        }
+        // console.log("config", res.status);
         this.setState({ data: res.data });
-
       })
-      .catch(() => {
+      .catch((err) => {
         if (retries != 0) {
           retries = retries - 1;
           this.getChannels(retries);
         }
         else {
-          this.setState({ showLoader: false })
-          swal({
-            title: "Oops! An Error has occured!",
-            text: "Please try again...",
-            icon: "warning",
-            button: "Okay",
-          });
+          if (err.response.status == 401) {
+            swal({
+              title: "Token expired",
+              text: "Please login again",
+              icon: "warning",
+              button: "Okay",
+            });
+            this.props.history.replace('/');
+          }
+          else {
+            this.setState({ showLoader: false })
+            swal({
+              title: "Oops! An Error has occured!",
+              text: "Please try again...",
+              icon: "warning",
+              button: "Okay",
+            });
+          }
         }
       })
   }
@@ -176,7 +177,7 @@ class Upload_Clip extends React.Component {
     }
   }
 
-  postData = async () => {
+  postData = () => {
 
     let config1 = {
       headers: {
@@ -184,28 +185,55 @@ class Upload_Clip extends React.Component {
         // "Content-Type": "application/json"
       }
     }
-    let getUploadURLResponse = await axios.get(GET_FILE_UPLOAD_URL, config1).catch(() => {
-      this.setState({ showLoader: false })
-      swal({
-        title: "Oops! An Error has occured!",
-        text: "Please try again...",
-        icon: "warning",
-        button: "Okay",
+    this.setState({showLoader: true});
+    axios.get(GET_FILE_UPLOAD_URL, config1).then((getUploadURLResponse) => {
+      // console.log(getUploadURLResponse.data);
+      this.setState({ fileUploadURL: getUploadURLResponse.data.url });
+      this.setState({ objectId: getUploadURLResponse.data.objectId });
+      this.handleUpload().then((_) => {
+        this.postFinalData();
+      }).catch((_err) => {
+        if (_err.response.status == 401) {
+          swal({
+            title: "Token expired",
+            text: "Please login again",
+            icon: "warning",
+            button: "Okay",
+          });
+          localStorage.clear();
+          this.props.history.replace('/');
+        }
+        else {
+          this.setState({ showLoader: false })
+          swal({
+            title: "Oops! An Error has occured!",
+            text: "Please try again...",
+            icon: "warning",
+            button: "Okay",
+          });
+        }
       });
+    }).catch((err) => {
+      if (err.response.status == 401) {
+        swal({
+          title: "Token expired",
+          text: "Please login again",
+          icon: "warning",
+          button: "Okay",
+        });
+        localStorage.clear();
+        this.props.history.replace('/');
+      }
+      else {
+        this.setState({ showLoader: false })
+        swal({
+          title: "Oops! An Error has occured!",
+          text: "Please try again...",
+          icon: "warning",
+          button: "Okay",
+        });
+      }
     });
-    console.log(getUploadURLResponse.data);
-    this.setState({ fileUploadURL: getUploadURLResponse.data.url });
-    this.setState({ objectId: getUploadURLResponse.data.objectId });
-    await this.handleUpload().catch(() => {
-      this.setState({ showLoader: false })
-      swal({
-        title: "Oops! An Error has occured!",
-        text: "Please try again...",
-        icon: "warning",
-        button: "Okay",
-      });
-    });
-    this.postFinalData();
 
   }
 
@@ -232,19 +260,10 @@ class Upload_Clip extends React.Component {
           icon: "success",
           button: "Okay",
         });
-        if (res.status == 401) {
-          swal({
-            title: "Oops! An Error has occured!",
-            text: "Please try again...",
-            icon: "warning",
-            button: "Okay",
-          });
-          this.props.history.replace('/')
-        }
         this.state.channelId = ""
         this.setState({ channelId: this.state.channelId })
         this.setState({ description: '' })
-        this.setState({ duration: '' })
+        this.setState({ duration: -1 })
         for (var i = 0; i < this.state.checked.length; i++) {
           this.state.checked[i].isChecked = false;
           this.setState({ checked: this.state.checked })
@@ -256,17 +275,27 @@ class Upload_Clip extends React.Component {
         this.removeTags()
         this.setState({ showLoader: false })
       })
-      .catch((e) => {
-
-        swal({
-          title: "An Error has occured!",
-          text: "Please try uploading again...",
-          icon: "warning",
-          button: "Okay",
-        });
-        this.setState({ showLoader: false })
-      })
-
+      .catch((err) => {
+        if (err.response.status == 401) {
+          swal({
+            title: "Token expired",
+            text: "Please login again",
+            icon: "warning",
+            button: "Okay",
+          });
+          localStorage.clear();
+          this.props.history.replace('/');
+        }
+        else {
+          this.setState({ showLoader: false })
+          swal({
+            title: "Oops! An Error has occured!",
+            text: "Please try again...",
+            icon: "warning",
+            button: "Okay",
+          });
+        }
+      });
   }
 
   removeTags = () => {
@@ -306,6 +335,21 @@ class Upload_Clip extends React.Component {
         });
       },
       beforeUpload: file => {
+        let audio = document.createElement('audio');
+        if (file) {
+          let reader = new FileReader();
+          reader.onload = (e) => {
+            audio.src = e.target.result;
+            // console.log(audio.duration);
+            audio.addEventListener('loadedmetadata', () => {
+              let duration = Math.floor(audio.duration);
+              // console.log("The duration of the song is of: " + duration + " seconds");
+              this.setState({ duration: duration.toString() });
+            }, false);
+          };
+
+          reader.readAsDataURL(file);
+        }
         this.setState(state => ({
           fileList: [file],
 

@@ -5,15 +5,12 @@ import Login from './components/Login';
 import OtpPage from './components/otpPage'
 import {
   BrowserRouter as Router,
-  Switch,
-  Route,
-  Link
+  Route
 } from "react-router-dom";
 
 function App() {
   return (
     <Router>
-      {/* <Switch> */}
       <div className='app'>
         <Card className='cardStyle'>
           <Route exact path="/">
@@ -25,14 +22,10 @@ function App() {
           <Route path="/home">
             <Upload_Clip />
           </Route>
-          {/* <Upload_Clip/> */}
 
         </Card>
       </div>
-      {/* </Switch> */}
     </Router>
-
-
   );
 }
 

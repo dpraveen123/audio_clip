@@ -19,6 +19,10 @@ class OtpPage extends Component {
     }
 
     componentDidMount = () => {
+        let token = localStorage.getItem('accessToken');
+        if(token){
+          this.props.history.replace('/home');
+        }
         if (this.props.location.mobileNumber !== undefined) {
             this.setState({ mobileNumber: this.props.location.mobileNumber.substring(3, 13) })
             this.setState({ countryCode: this.props.location.mobileNumber.substring(0, 3) })

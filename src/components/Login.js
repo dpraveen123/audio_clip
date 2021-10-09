@@ -4,15 +4,22 @@ import Typography from "@mui/material/Typography";
 import { GENERATE_OTP } from "../config/endpoints";
 import { NavLink } from "react-router-dom";
 import { Button } from "antd";
+import { withRouter } from "react-router-dom";
 import axios from "axios";
 import swal from 'sweetalert';
 
-export default class Login extends Component {
+class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
       mobileNumber: '',
       isDisabled: true
+    }
+  }
+  componentDidMount = async () => {
+    let token = localStorage.getItem('accessToken');
+    if(token){
+      this.props.history.replace('/home');
     }
   }
 
@@ -96,3 +103,5 @@ export default class Login extends Component {
     );
   }
 }
+
+export default withRouter(Login);
