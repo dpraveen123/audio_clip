@@ -1,3 +1,8 @@
+/*
+================ LOGIN COMPONENT ================ 
+This component contains the phone number input form and
+generate OTP API call.
+*/
 import React, { Component } from "react";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
@@ -17,6 +22,7 @@ class Login extends Component {
     }
   }
   componentDidMount = async () => {
+    // Check for the token in local storage, if it is there, redirect the user to upload clip form page
     let token = localStorage.getItem('accessToken');
     if(token){
       this.props.history.replace('/home');
@@ -28,7 +34,7 @@ class Login extends Component {
       MobileNumber: this.state.mobileNumber.substring(3, 13),
       CountryCode: this.state.mobileNumber.substring(0, 3)
     }
-    console.log(userData);
+    //  API call to generate the OTP
     axios.post(GENERATE_OTP, userData)
       .then(res => {
         // console.log(res.data);

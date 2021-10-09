@@ -1,3 +1,8 @@
+/* 
+=============== OTP COMPONENT ================
+This component contains the OTP input field and 
+verify OTP API call.
+ */
 import React, { Component } from "react";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
@@ -19,6 +24,7 @@ class OtpPage extends Component {
     }
 
     componentDidMount = () => {
+        // Check for the token in local storage, if it is there, redirect the user to upload clip form page
         let token = localStorage.getItem('accessToken');
         if(token){
           this.props.history.replace('/home');
@@ -26,7 +32,6 @@ class OtpPage extends Component {
         if (this.props.location.mobileNumber !== undefined) {
             this.setState({ mobileNumber: this.props.location.mobileNumber.substring(3, 13) })
             this.setState({ countryCode: this.props.location.mobileNumber.substring(0, 3) })
-            // console.log(this.state.mobileNumber, this.state.countryCode, "is props in otppage");
         }
     }
 
@@ -37,13 +42,13 @@ class OtpPage extends Component {
             DeviceToken: "xyz",
             MobileNumber: this.state.mobileNumber
         }
+        // verify OTP API call
         axios.post(VERIFY_OTP, userData)
             .then(res => {
                 this.setState({ otpVerified: 1 })
-                // console.log(res.data);
-                // console.log("accesToken", res.data.accessToken);
                 this.state.accessToken = res.data.accessToken
                 this.setState({ accessToken: this.state.accessToken })
+                // After getting the token, store it in the local storage to handle the page reload case
                 localStorage.setItem('accessToken', this.state.accessToken)
                 this.props.history.replace({ pathname: '/home', accessToken: this.state.accessToken })
             })
