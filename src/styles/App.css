@@ -19,7 +19,7 @@
   padding-bottom: 50px;
  
 }
-/* inside conteent contatiner of the card */
+/* inside content contatiner of the card */
 
 .clipBox{
     height: 100%;
@@ -71,13 +71,7 @@
 
 /* login pAGE STYLINGS */
 
-.login-form{
-  /* display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  justify-content: space-evenly; */
-} 
+
 
 
 
