@@ -24,7 +24,7 @@ class Login extends Component {
   componentDidMount = async () => {
     // Check for the token in local storage, if it is there, redirect the user to upload clip form page
     let token = localStorage.getItem('accessToken');
-    if(token){
+    if (token) {
       this.props.history.replace('/home');
     }
   }

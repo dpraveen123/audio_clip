@@ -72,6 +72,7 @@ class UploadClip extends React.Component {
       let token = localStorage.getItem('accessToken');
       if (token) {
         this.setState({ accessToken: token });
+        console.log(token);
       }
       else {
         this.props.history.replace('/')
@@ -188,13 +189,13 @@ class UploadClip extends React.Component {
         // "Content-Type": "application/json"
       }
     }
-    this.setState({showLoader: true});
+    this.setState({ showLoader: true });
     axios.get(GET_FILE_UPLOAD_URL, config1).then((getUploadURLResponse) => {
       // console.log(getUploadURLResponse.data);
       this.setState({ fileUploadURL: getUploadURLResponse.data.url });
       this.setState({ objectId: getUploadURLResponse.data.objectId });
       this.handleUpload().then((_) => {
-      this.postMetaData();
+        this.postMetaData();
       }).catch((_err) => {
         if (_err.response.status === 401) {
           swal({

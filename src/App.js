@@ -8,7 +8,7 @@ import Upload_Clip from './components/UploadClip';
 import Card from '@mui/material/Card';
 import './styles/App.css'
 import Login from './components/Login';
-import OtpPage from './components/OtpPage'
+import OtpPage from './components/OtpPage';
 import {
   BrowserRouter as Router,
   Route
