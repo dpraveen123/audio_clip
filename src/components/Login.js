@@ -1,18 +1,31 @@
+/*
+================ LOGIN COMPONENT ================ 
+This component contains the phone number input form and
+generate OTP API call.
+*/
 import React, { Component } from "react";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { GENERATE_OTP } from "../config/endpoints";
 import { NavLink } from "react-router-dom";
 import { Button } from "antd";
+import { withRouter } from "react-router-dom";
 import axios from "axios";
 import swal from 'sweetalert';
 
-export default class Login extends Component {
+class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
       mobileNumber: '',
       isDisabled: true
+    }
+  }
+  componentDidMount = async () => {
+    // Check for the token in local storage, if it is there, redirect the user to upload clip form page
+    let token = localStorage.getItem('accessToken');
+    if(token){
+      this.props.history.replace('/home');
     }
   }
 
@@ -21,7 +34,7 @@ export default class Login extends Component {
       MobileNumber: this.state.mobileNumber.substring(3, 13),
       CountryCode: this.state.mobileNumber.substring(0, 3)
     }
-    console.log(userData);
+    //  API call to generate the OTP
     axios.post(GENERATE_OTP, userData)
       .then(res => {
         // console.log(res.data);
@@ -96,3 +109,5 @@ export default class Login extends Component {
     );
   }
 }
+
+export default withRouter(Login);

@@ -1,3 +1,8 @@
+/* 
+============= UPLOAD CLIP COMPONENT ================
+This component contains the clip upload form 
+*/
+
 import React from "react";
 import { Upload, Button } from "antd";
 import swal from 'sweetalert';
@@ -20,10 +25,11 @@ import { GET_FILE_UPLOAD_URL } from "../config/endpoints";
 import { FORM_SUBMIT_URL } from "../config/endpoints";
 import CircularProgress from '@mui/material/CircularProgress';
 
-var retries = 3;
+// number of retries if get channels API call fails
+const retries = 3;
 
 
-class Upload_Clip extends React.Component {
+class UploadClip extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -36,7 +42,7 @@ class Upload_Clip extends React.Component {
       Language: [],
       channelId: '',
       description: '',
-      duration: 10,
+      duration: -1,
       languages: [],
       objectId: "",
       tags: [],
@@ -60,37 +66,9 @@ class Upload_Clip extends React.Component {
     }
   }
 
-  handleUpload = () => {
-    return new Promise((resolve, reject) => {
-
-      const { fileList } = this.state;
-      let requestConfig = {
-        headers: {
-          "x-ms-blob-type": "BlockBlob"
-        }
-      }
-
-      this.setState({
-        uploading: true,
-      });
-
-      console.log(fileList);
-      let formData = new FormData();
-      formData.append("file", fileList[0]);
-
-      // You can use any AJAX library you like
-      axios.put(this.state.fileUploadURL, formData, requestConfig).then((res) => {
-        console.log(res);
-        resolve(res.data);
-      }).catch((err) => {
-        console.error(err);
-        reject(err);
-      });
-    });
-  };
+  // this method will be exec after the component is init'ed
   componentDidMount = async () => {
-    console.log("accsess token from otppage is", this.props.location.accessToken)
-    if (this.props.location.accessToken == undefined) {
+    if (this.props.location.accessToken === undefined) {
       let token = localStorage.getItem('accessToken');
       if (token) {
         this.setState({ accessToken: token });
@@ -98,13 +76,37 @@ class Upload_Clip extends React.Component {
       else {
         this.props.history.replace('/')
       }
-
     }
     else {
       this.setState({ accessToken: this.props.location.accessToken });
     }
     this.getChannels(retries);
   }
+
+  // PUT request to upload the file
+  handleUpload = () => {
+    return new Promise((resolve, reject) => {
+      const { fileList } = this.state;
+      let requestConfig = {
+        headers: {
+          "x-ms-blob-type": "BlockBlob"
+        }
+      }
+      this.setState({
+        uploading: true,
+      });
+      let formData = new FormData();
+      formData.append("file", fileList[0]);
+      axios.put(this.state.fileUploadURL, formData, requestConfig).then((res) => {
+        resolve(res.data);
+      }).catch((err) => {
+        console.error(err);
+        reject(err);
+      });
+    });
+  };
+
+
   getChannels = (retries) => {
     let config = {
       headers: {
@@ -114,23 +116,95 @@ class Upload_Clip extends React.Component {
     }
     axios.get(GET_CHANNELS, config)
       .then(res => {
-        console.log("config", res.status);
-        if (res.status == 401) {
-          swal({
-            title: "Oops! An Error has occured!",
-            text: "Please try again...",
-            icon: "warning",
-            button: "Okay",
-          });
-          this.props.history.replace('/')
-        }
         this.setState({ data: res.data });
-
       })
-      .catch(() => {
+      .catch((err) => {
         if (retries != 0) {
           retries = retries - 1;
           this.getChannels(retries);
+        }
+        else {
+          if (err.response.status === 401) {
+            swal({
+              title: "Token expired",
+              text: "Please login again",
+              icon: "warning",
+              button: "Okay",
+            });
+            this.props.history.replace('/');
+          }
+          else {
+            this.setState({ showLoader: false })
+            swal({
+              title: "Oops! An Error has occured!",
+              text: "Please try again...",
+              icon: "warning",
+              button: "Okay",
+            });
+          }
+        }
+      })
+  }
+
+  //  If all the fields are vaild, upload sequence will be init'ed
+  formValidations = () => {
+
+    if (this.state.description === '') {
+      this.setState({ isDescriptionEmpty: 1 })
+    }
+    else {
+      this.setState({ isDescriptionEmpty: 0 })
+    }
+    if (this.state.channelId === '') {
+      this.setState({ isChannelIdEmpty: 1 })
+    }
+    else {
+      this.setState({ isChannelIdEmpty: 0 })
+    }
+    if (this.state.Language.length === 0) {
+      this.setState({ isLanguageEmpty: 1 })
+    }
+    else {
+      this.setState({ isLanguageEmpty: 0 })
+    }
+    if (this.state.fileList.length === 0) {
+      this.setState({ isFileListEmpty: 1 })
+    }
+    if (this.state.channelId === '' || this.state.description === '' || this.state.Language.length === 0 || this.state.fileList.length === 0) {
+      this.setState({ showLoader: false })
+      this.setState({ isEmpty: 1 })
+    }
+    else {
+      // Data is valid, so we can start uploading the file and submitting the meta data
+      this.postData()
+    }
+  }
+
+  postData = () => {
+
+    let config1 = {
+      headers: {
+        "Authorization": this.state.accessToken,
+        // "Content-Type": "application/json"
+      }
+    }
+    this.setState({showLoader: true});
+    axios.get(GET_FILE_UPLOAD_URL, config1).then((getUploadURLResponse) => {
+      // console.log(getUploadURLResponse.data);
+      this.setState({ fileUploadURL: getUploadURLResponse.data.url });
+      this.setState({ objectId: getUploadURLResponse.data.objectId });
+      this.handleUpload().then((_) => {
+      this.postMetaData();
+      }).catch((_err) => {
+        if (_err.response.status === 401) {
+          swal({
+            title: "Token expired",
+            text: "Please login again",
+            icon: "warning",
+            button: "Okay",
+          });
+          localStorage.clear();
+          this.props.history.replace('/');
         }
         else {
           this.setState({ showLoader: false })
@@ -141,75 +215,32 @@ class Upload_Clip extends React.Component {
             button: "Okay",
           });
         }
-      })
-  }
-
-  formValidations = () => {
-
-    if (this.state.description == '') {
-      this.setState({ isDescriptionEmpty: 1 })
-    }
-    else {
-      this.setState({ isDescriptionEmpty: 0 })
-    }
-    if (this.state.channelId == '') {
-      this.setState({ isChannelIdEmpty: 1 })
-    }
-    else {
-      this.setState({ isChannelIdEmpty: 0 })
-    }
-    if (this.state.Language.length == 0) {
-      this.setState({ isLanguageEmpty: 1 })
-    }
-    else {
-      this.setState({ isLanguageEmpty: 0 })
-    }
-    if (this.state.fileList.length == 0) {
-      this.setState({ isFileListEmpty: 1 })
-    }
-    if (this.state.channelId == '' || this.state.description == '' || this.state.Language.length == 0 || this.state.fileList.length == 0) {
-      this.setState({ showLoader: false })
-      this.setState({ isEmpty: 1 })
-    }
-    else {
-      this.postData()
-    }
-  }
-
-  postData = async () => {
-
-    let config1 = {
-      headers: {
-        "Authorization": this.state.accessToken,
-        // "Content-Type": "application/json"
+      });
+    }).catch((err) => {
+      if (err.response.status === 401) {
+        swal({
+          title: "Token expired",
+          text: "Please login again",
+          icon: "warning",
+          button: "Okay",
+        });
+        localStorage.clear();
+        this.props.history.replace('/');
       }
-    }
-    let getUploadURLResponse = await axios.get(GET_FILE_UPLOAD_URL, config1).catch(() => {
-      this.setState({ showLoader: false })
-      swal({
-        title: "Oops! An Error has occured!",
-        text: "Please try again...",
-        icon: "warning",
-        button: "Okay",
-      });
+      else {
+        this.setState({ showLoader: false })
+        swal({
+          title: "Oops! An Error has occured!",
+          text: "Please try again...",
+          icon: "warning",
+          button: "Okay",
+        });
+      }
     });
-    console.log(getUploadURLResponse.data);
-    this.setState({ fileUploadURL: getUploadURLResponse.data.url });
-    this.setState({ objectId: getUploadURLResponse.data.objectId });
-    await this.handleUpload().catch(() => {
-      this.setState({ showLoader: false })
-      swal({
-        title: "Oops! An Error has occured!",
-        text: "Please try again...",
-        icon: "warning",
-        button: "Okay",
-      });
-    });
-    this.postFinalData();
 
   }
 
-  postFinalData = () => {
+  postMetaData = () => {
     var userData = {
       channelId: this.state.channelId,
       description: this.state.description,
@@ -232,19 +263,10 @@ class Upload_Clip extends React.Component {
           icon: "success",
           button: "Okay",
         });
-        if (res.status == 401) {
-          swal({
-            title: "Oops! An Error has occured!",
-            text: "Please try again...",
-            icon: "warning",
-            button: "Okay",
-          });
-          this.props.history.replace('/')
-        }
         this.state.channelId = ""
         this.setState({ channelId: this.state.channelId })
         this.setState({ description: '' })
-        this.setState({ duration: '' })
+        this.setState({ duration: -1 })
         for (var i = 0; i < this.state.checked.length; i++) {
           this.state.checked[i].isChecked = false;
           this.setState({ checked: this.state.checked })
@@ -256,17 +278,27 @@ class Upload_Clip extends React.Component {
         this.removeTags()
         this.setState({ showLoader: false })
       })
-      .catch((e) => {
-
-        swal({
-          title: "An Error has occured!",
-          text: "Please try uploading again...",
-          icon: "warning",
-          button: "Okay",
-        });
-        this.setState({ showLoader: false })
-      })
-
+      .catch((err) => {
+        if (err.response.status === 401) {
+          swal({
+            title: "Token expired",
+            text: "Please login again",
+            icon: "warning",
+            button: "Okay",
+          });
+          localStorage.clear();
+          this.props.history.replace('/');
+        }
+        else {
+          this.setState({ showLoader: false })
+          swal({
+            title: "Oops! An Error has occured!",
+            text: "Please try again...",
+            icon: "warning",
+            button: "Okay",
+          });
+        }
+      });
   }
 
   removeTags = () => {
@@ -306,6 +338,21 @@ class Upload_Clip extends React.Component {
         });
       },
       beforeUpload: file => {
+        let audio = document.createElement('audio');
+        if (file) {
+          let reader = new FileReader();
+          reader.onload = (e) => {
+            audio.src = e.target.result;
+            // console.log(audio.duration);
+            audio.addEventListener('loadedmetadata', () => {
+              let duration = Math.floor(audio.duration);
+              // console.log("The duration of the song is of: " + duration + " seconds");
+              this.setState({ duration: duration });
+            }, false);
+          };
+
+          reader.readAsDataURL(file);
+        }
         this.setState(state => ({
           fileList: [file],
 
@@ -373,7 +420,7 @@ class Upload_Clip extends React.Component {
 
           }
         </FormGroup>
-        <p style={{ fontSize: 12, color: "red" }}> {this.state.isLanguageEmpty === 1 ? "Please select anyone out this fields." : ""}</p>
+        <p style={{ fontSize: 12, color: "red" }}> {this.state.isLanguageEmpty === 1 ? "Please select atleast one language" : ""}</p>
 
         <div style={{ marginTop: 15 }}>
           <Upload {...props} accept={[".mp3", ".aac"]} maxCount={1}>
@@ -389,11 +436,11 @@ class Upload_Clip extends React.Component {
           <EditableTagGroup callBack={this.getTags} tags={this.state.tags} />
         </div>
         <div style={{ alignItems: "center", textAlign: "center" }}>
-          <Button onClick={this.formValidations} variant="contained" style={{ marginTop: 35, textAlign: "center", backgroundColor: "#8B139E", color: "white", borderRadius: 5 }} disabled={this.state.showLoader} >{this.state.showLoader == true ? <CircularProgress size="1.5rem" style={{ color: "white", padding: 5 }} /> : "Upload Clip"} </Button>
+          <Button onClick={this.formValidations} variant="contained" style={{ marginTop: 35, textAlign: "center", backgroundColor: "#8B139E", color: "white", borderRadius: 5 }} disabled={this.state.showLoader} >{this.state.showLoader === true ? <CircularProgress size="1.5rem" style={{ color: "white", padding: 5 }} /> : "Upload Clip"} </Button>
         </div>
       </div>
     );
   }
 }
 
-export default withRouter(Upload_Clip);
+export default withRouter(UploadClip);

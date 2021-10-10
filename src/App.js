@@ -1,19 +1,22 @@
-import Upload_Clip from './components/Upload_Clip';
+/* 
+================ APP COMPONENT ===============
+This is the root component of this application.
+The routes are configured in this component.
+ */
+
+import Upload_Clip from './components/UploadClip';
 import Card from '@mui/material/Card';
 import './styles/App.css'
 import Login from './components/Login';
-import OtpPage from './components/otpPage'
+import OtpPage from './components/OtpPage'
 import {
   BrowserRouter as Router,
-  Switch,
-  Route,
-  Link
+  Route
 } from "react-router-dom";
 
 function App() {
   return (
     <Router>
-      {/* <Switch> */}
       <div className='app'>
         <Card className='cardStyle'>
           <Route exact path="/">
@@ -25,14 +28,10 @@ function App() {
           <Route path="/home">
             <Upload_Clip />
           </Route>
-          {/* <Upload_Clip/> */}
 
         </Card>
       </div>
-      {/* </Switch> */}
     </Router>
-
-
   );
 }
 

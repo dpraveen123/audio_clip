@@ -1,9 +1,14 @@
-import { Tag, Button } from 'antd';
+/*
+============== TAGS  COMPONENT ============== 
+This is the tages input field component.
+Based on AntDesignUI library.
+*/
+
+import { Tag } from 'antd';
 import React from 'react';
 import { Input, Tooltip } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import 'antd/dist/antd.css';
-// import { EventRegister } from 'react-events-listeners'
 
 class EditableTagGroup extends React.Component {
   constructor(props) {
@@ -24,7 +29,7 @@ class EditableTagGroup extends React.Component {
 
   handleClose = removedTag => {
     const tags = this.state.tags.filter(tag => tag !== removedTag);
-    console.log(tags, "but why tags not emtying");
+    // console.log(tags, "but why tags not emtying");
     this.setState({ tags });
   };
 
@@ -39,7 +44,7 @@ class EditableTagGroup extends React.Component {
   handleInputConfirm = () => {
     const { inputValue } = this.state;
     let { tags } = this.props;
-    console.log("hloo", tags, inputValue, "tags are not emptying here");
+    // console.log("hloo", tags, inputValue, "tags are not emptying here");
 
     if (inputValue && tags.indexOf(inputValue) === -1) {
       tags = [...tags, inputValue];
